@@ -16,7 +16,7 @@
   <packaging>jar</packaging>
 
   <name>queue-ticket-service</name>
-  <description>Demo project for Spring Boot</description>
+  <description>Services for QueueTicket</description>
 
   <developers>
     <developer>
