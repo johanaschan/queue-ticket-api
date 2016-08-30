@@ -8,7 +8,7 @@ import java.util.List;
  * Created by Lars on 2016-08-29.
  */
 public class ReditTest {
-    public static void main(String[] args) {
+    public static void test(String[] args) {
         //Connecting to Redis server on localhost
         Jedis jedis = new Jedis("localhost");
         System.out.println("Connection to server sucessfully");
