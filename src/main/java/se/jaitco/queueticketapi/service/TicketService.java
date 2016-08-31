@@ -21,42 +21,42 @@ public class TicketService {
 
     private static final String TICKET_KEY = "TICKET_KEY";
 
-    private final Object lock = new Object();
-
     @Autowired
     private JedisPool jedisPool;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    public Ticket takeTicket() {
-        log.info("takeTicket");
+    public synchronized Ticket takeTicket() {
         Ticket ticket;
         try (Jedis jedis = jedisPool.getResource()) {
-            synchronized (lock) {
-                String ticketString = jedis.lindex(TICKET_KEY, -1);
-                if (ticketString == null) {
-                    ticket = ticket(1);
-                    jedis.rpush(TICKET_KEY, writeObjectAsString(ticket));
-                } else {
-                    ticket = readValue(ticketString);
-                    int newNumber = ticket.getNumber() + 1;
-                    ticket = ticket(newNumber);
-                    jedis.rpush(TICKET_KEY, writeObjectAsString(ticket));
-                }
+            String ticketString = jedis.lindex(TICKET_KEY, -1);
+            if (ticketString == null) {
+                ticket = ticket(1);
+                jedis.rpush(TICKET_KEY, writeObjectAsString(ticket));
+            } else {
+                ticket = readValue(ticketString);
+                int newNumber = ticket.getNumber() + 1;
+                ticket = ticket(newNumber);
+                jedis.rpush(TICKET_KEY, writeObjectAsString(ticket));
             }
-            log.info(jedis.llen(TICKET_KEY).toString());
         }
         return ticket;
     }
 
-    public void resetTickets() {
-        log.info("resetTickets");
+    public synchronized void resetTickets() {
         try (Jedis jedis = jedisPool.getResource()) {
-            synchronized (lock) {
-                jedis.del(TICKET_KEY);
-            }
+            jedis.del(TICKET_KEY);
         }
+    }
+
+    public synchronized Optional<Ticket> nextTicket() {
+        removeFirstTicket();
+        return getFirstTicket();
+    }
+
+    public synchronized Optional<Ticket> currentTicket() {
+        return getFirstTicket();
     }
 
     private Ticket ticket(int number) {
@@ -84,18 +84,10 @@ public class TicketService {
         }
     }
 
-    public Optional<Ticket> nextTicket(){
-        removeFirstTicket();
-        return getFirstTicket();
-    }
-
     private void removeFirstTicket() {
         try (Jedis jedis = jedisPool.getResource()) {
-            jedis.ltrim(TICKET_KEY,1,-1);
+            jedis.ltrim(TICKET_KEY, 1, -1);
         }
-    }
-    public Ticket currentTicket(){
-        return getFirstTicket().orElse(Ticket.builder().build());
     }
 
     private Optional<Ticket> getFirstTicket() {

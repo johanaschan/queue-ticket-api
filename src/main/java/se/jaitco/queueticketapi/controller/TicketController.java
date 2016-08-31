@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import se.jaitco.queueticketapi.model.Ticket;
 import se.jaitco.queueticketapi.service.TicketService;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/tickets")
 public class TicketController {
@@ -31,16 +29,13 @@ public class TicketController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/next", method = {RequestMethod.PATCH})
-    public void nextTicket()
-    {
-        Optional<Ticket> x = ticketService.nextTicket();
-//        return x.orElse(Ticket.builder().build());
+    public void nextTicket() {
+        ticketService.nextTicket();
     }
 
     @RequestMapping(value = "/current", method = {RequestMethod.GET})
-    public Ticket currentTicket()
-    {
-        return ticketService.currentTicket();
+    public Ticket currentTicket() {
+        return ticketService.currentTicket().orElse(null);
     }
 
 }
