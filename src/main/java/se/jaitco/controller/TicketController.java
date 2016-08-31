@@ -26,5 +26,4 @@ public class TicketController {
         ticketService.resetTickets();
     }
 
-
 }
