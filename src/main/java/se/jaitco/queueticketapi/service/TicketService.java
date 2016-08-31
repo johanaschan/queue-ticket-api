@@ -3,6 +3,7 @@ package se.jaitco.queueticketapi.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RAtomicLong;
 import org.redisson.api.RQueue;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class TicketService {
 
     private static final String TICKET_KEY = "TICKET_KEY";
 
+    private static final String QUEUE_TICKET_NUMBER_KEY = "QUEUE_TICKET_NUMBER_KEY";
+
     @Autowired
     private JedisPool jedisPool;
 
@@ -33,6 +36,7 @@ public class TicketService {
     private ObjectMapper objectMapper;
 
     public synchronized Ticket takeTicket() {
+        RAtomicLong atomicLong = redissonClient.getAtomicLong(QUEUE_TICKET_NUMBER_KEY);
         RQueue<Ticket> tickets = redissonClient.getQueue(TICKET_KEY);
         Ticket ticket;
         try (Jedis jedis = jedisPool.getResource()) {
