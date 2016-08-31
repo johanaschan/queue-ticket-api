@@ -10,6 +10,7 @@ import redis.clients.jedis.JedisPool;
 import se.jaitco.queueticketapi.model.Ticket;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Created by Johan Aschan on 2016-08-31.
@@ -81,5 +82,32 @@ public class TicketService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Optional<Ticket> nextTicket(){
+        removeFirstTicket();
+        return getFirstTicket();
+    }
+
+    private void removeFirstTicket() {
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.ltrim(TICKET_KEY,1,-1);
+        }catch(Exception e){
+            log.error("fail:" + e.getCause());
+        }
+    }
+
+    public Optional<Ticket> getFirstTicket() {
+        try (Jedis jedis = jedisPool.getResource()) {
+            String ticketString = jedis.lindex(TICKET_KEY, 0);
+            if (ticketString == null) {
+                return Optional.empty();
+            } else {
+                return Optional.of(readValue(ticketString));
+            }
+        }catch(Exception e){
+            log.error("fail:" + e.getCause());
+        }
+        return null;
     }
 }
