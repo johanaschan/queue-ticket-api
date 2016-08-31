@@ -35,17 +35,18 @@ public class TicketService {
         Ticket ticket;
         try (Jedis jedis = jedisPool.getResource()) {
             synchronized (lock) {
-                String ticketString = jedis.lpop(TICKET_KEY);
+                String ticketString = jedis.lindex(TICKET_KEY, -1);
                 if (ticketString == null) {
                     ticket = ticket(1);
-                    jedis.lpush(TICKET_KEY, writeObjectAsString(ticket));
+                    jedis.rpush(TICKET_KEY, writeObjectAsString(ticket));
                 } else {
                     ticket = readValue(ticketString);
                     int newNumber = ticket.getNumber() + 1;
                     ticket = ticket(newNumber);
-                    jedis.lpush(TICKET_KEY, writeObjectAsString(ticket));
+                    jedis.rpush(TICKET_KEY, writeObjectAsString(ticket));
                 }
             }
+            log.info(jedis.llen(TICKET_KEY).toString());
         }
         return ticket;
     }
