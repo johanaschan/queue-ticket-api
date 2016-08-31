@@ -92,8 +92,6 @@ public class TicketService {
     private void removeFirstTicket() {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.ltrim(TICKET_KEY,1,-1);
-        }catch(Exception e){
-            log.error("fail:" + e.getCause());
         }
     }
     public Ticket currentTicket(){
@@ -108,9 +106,6 @@ public class TicketService {
             } else {
                 return Optional.of(readValue(ticketString));
             }
-        }catch(Exception e){
-            log.error("fail:" + e.getCause());
         }
-        return null;
     }
 }
