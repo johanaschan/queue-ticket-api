@@ -13,28 +13,34 @@ public class TicketService {
 
     private static final String TICKET_KEY = "TICKET_KEY";
 
+    private final Object lock = new Object();
+    
     @Autowired
     private JedisPool jedisPool;
 
     public String takeTicket() {
         String ticket;
         try (Jedis jedis = jedisPool.getResource()) {
-            ticket = jedis.lpop(TICKET_KEY);
-            if (ticket == null) {
-                ticket = "1";
-                jedis.lpush(TICKET_KEY, ticket);
-            } else {
-                Integer newTicket = Integer.parseInt(ticket) + 1;
-                ticket = newTicket.toString();
-                jedis.lpush(TICKET_KEY, ticket);
+            synchronized (lock) {
+                ticket = jedis.lpop(TICKET_KEY);
+                if (ticket == null) {
+                    ticket = "1";
+                    jedis.lpush(TICKET_KEY, ticket);
+                } else {
+                    Integer newTicket = Integer.parseInt(ticket) + 1;
+                    ticket = newTicket.toString();
+                    jedis.lpush(TICKET_KEY, ticket);
+                }
             }
         }
         return ticket;
     }
 
-    public void resetTicket() {
+    public void resetTickets() {
         try (Jedis jedis = jedisPool.getResource()) {
-            jedis.ltrim(TICKET_KEY, 0, -1);
+            synchronized (lock) {
+                jedis.ltrim(TICKET_KEY, 0, -1);
+            }
         }
 
     }

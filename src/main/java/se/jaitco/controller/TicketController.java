@@ -8,7 +8,7 @@ import se.jaitco.model.Ticket;
 import se.jaitco.service.TicketService;
 
 @RestController
-@RequestMapping("/ticket")
+@RequestMapping("/tickets")
 public class TicketController {
 
     @Autowired
@@ -23,7 +23,7 @@ public class TicketController {
 
     @RequestMapping(value = "/reset", method = RequestMethod.GET)
     public void resetTickets() {
-        ticketService.resetTicket();
+        ticketService.resetTickets();
     }
 
 
