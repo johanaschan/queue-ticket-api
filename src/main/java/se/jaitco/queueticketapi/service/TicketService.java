@@ -50,13 +50,21 @@ public class TicketService {
         }
     }
 
-    public synchronized Optional<Ticket> nextTicket() {
-        removeFirstTicket();
-        return getFirstTicket();
+    public synchronized void nextTicket() {
+        try (Jedis jedis = jedisPool.getResource()) {
+            jedis.ltrim(TICKET_KEY, 1, -1);
+        }
     }
 
     public synchronized Optional<Ticket> currentTicket() {
-        return getFirstTicket();
+        try (Jedis jedis = jedisPool.getResource()) {
+            String ticketString = jedis.lindex(TICKET_KEY, 0);
+            if (ticketString == null) {
+                return Optional.empty();
+            } else {
+                return Optional.of(readValue(ticketString));
+            }
+        }
     }
 
     private Ticket ticket(int number) {
@@ -81,23 +89,6 @@ public class TicketService {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private void removeFirstTicket() {
-        try (Jedis jedis = jedisPool.getResource()) {
-            jedis.ltrim(TICKET_KEY, 1, -1);
-        }
-    }
-
-    private Optional<Ticket> getFirstTicket() {
-        try (Jedis jedis = jedisPool.getResource()) {
-            String ticketString = jedis.lindex(TICKET_KEY, 0);
-            if (ticketString == null) {
-                return Optional.empty();
-            } else {
-                return Optional.of(readValue(ticketString));
-            }
         }
     }
 }
