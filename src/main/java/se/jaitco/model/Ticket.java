@@ -10,12 +10,12 @@ import lombok.Value;
  */
 @Value
 @Builder
-@JsonDeserialize(builder = TestResponse.TestResponseBuilder.class)
-public class TestResponse {
+@JsonDeserialize(builder = Ticket.TicketBuilder.class)
+public class Ticket {
 
     String info;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static final class TestResponseBuilder {
+    public static final class TicketBuilder {
     }
 }
