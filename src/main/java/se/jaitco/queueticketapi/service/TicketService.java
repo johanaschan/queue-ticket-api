@@ -3,6 +3,8 @@ package se.jaitco.queueticketapi.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RQueue;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
@@ -25,9 +27,13 @@ public class TicketService {
     private JedisPool jedisPool;
 
     @Autowired
+    private RedissonClient redissonClient;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     public synchronized Ticket takeTicket() {
+        RQueue<Ticket> tickets = redissonClient.getQueue(TICKET_KEY);
         Ticket ticket;
         try (Jedis jedis = jedisPool.getResource()) {
             String ticketString = jedis.lindex(TICKET_KEY, -1);
@@ -91,5 +97,5 @@ public class TicketService {
             throw new RuntimeException(e);
         }
     }
-    
+
 }
