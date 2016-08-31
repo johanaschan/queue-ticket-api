@@ -40,8 +40,7 @@ public class TicketController {
     @RequestMapping(value = "/current", method = {RequestMethod.GET})
     public Ticket currentTicket()
     {
-        Optional<Ticket> x = ticketService.getFirstTicket();
-        return x.orElse(Ticket.builder().build());
+        return ticketService.currentTicket();
     }
 
 }

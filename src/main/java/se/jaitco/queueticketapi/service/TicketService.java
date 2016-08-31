@@ -96,8 +96,11 @@ public class TicketService {
             log.error("fail:" + e.getCause());
         }
     }
+    public Ticket currentTicket(){
+        return getFirstTicket().orElse(Ticket.builder().build());
+    }
 
-    public Optional<Ticket> getFirstTicket() {
+    private Optional<Ticket> getFirstTicket() {
         try (Jedis jedis = jedisPool.getResource()) {
             String ticketString = jedis.lindex(TICKET_KEY, 0);
             if (ticketString == null) {
