@@ -16,12 +16,10 @@ public class TicketController {
 
     @RequestMapping(value = "/take", method = RequestMethod.GET)
     public Ticket takeTicket() {
-        return Ticket.builder()
-                .info(ticketService.takeTicket())
-                .build();
+        return ticketService.takeTicket();
     }
 
-    @RequestMapping(value = "/reset", method = RequestMethod.GET)
+    @RequestMapping(value = "/reset", method = {RequestMethod.DELETE})
     public void resetTickets() {
         ticketService.resetTickets();
     }
