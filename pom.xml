@@ -11,12 +11,12 @@
   </parent>
 
   <groupId>se.jaitco</groupId>
-  <artifactId>queue-ticket-service</artifactId>
+  <artifactId>queue-ticket-api</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>queue-ticket-service</name>
-  <description>Services for QueueTicket</description>
+  <name>QueueTicketApi</name>
+  <description>API for QueueTicket</description>
 
   <developers>
     <developer>

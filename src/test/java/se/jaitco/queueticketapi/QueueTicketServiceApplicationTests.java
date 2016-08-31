@@ -1,4 +1,4 @@
-package se.jaitco;
+package se.jaitco.queueticketapi;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

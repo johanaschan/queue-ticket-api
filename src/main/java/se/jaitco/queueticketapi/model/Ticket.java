@@ -1,4 +1,4 @@
-package se.jaitco.model;
+package se.jaitco.queueticketapi.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
-@JsonDeserialize(builder = se.jaitco.model.Ticket.TicketBuilder.class)
+@JsonDeserialize(builder = Ticket.TicketBuilder.class)
 public class Ticket {
 
     int number;

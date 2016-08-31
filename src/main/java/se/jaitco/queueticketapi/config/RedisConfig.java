@@ -1,4 +1,4 @@
-package se.jaitco.config;
+package se.jaitco.queueticketapi.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
