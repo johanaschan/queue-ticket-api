@@ -24,6 +24,10 @@
       <email>aschan.johan@gmail.com</email>
       <organization>Jaitco</organization>
     </developer>
+    <developer>
+      <name>Lars Mårdberg</name>
+      <email>larsmardberg@gmail.com</email>
+    </developer>
   </developers>
 
   <properties>
