@@ -57,7 +57,7 @@ public class TicketService {
 
     public void nextTicket() {
         RLock nextLock = redissonClient.getLock(TICKET_NEXT_KEY);
-        nextLock.lock();
+        nextLock.lock(1,TimeUnit.SECONDS);
         redissonClient.getQueue(TICKET_QUEUE).poll();
         nextLock.unlock();
     }
