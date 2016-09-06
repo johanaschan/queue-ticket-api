@@ -21,16 +21,18 @@ public class TicketController {
         return ticketService.takeTicket();
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/reset", method = {RequestMethod.DELETE})
-    public void resetTickets() {
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/reset", method = {RequestMethod.GET})
+    public String resetTickets() {
         ticketService.resetTickets();
+        return "RESET";
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/next", method = {RequestMethod.PATCH})
-    public void nextTicket() {
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/next", method = {RequestMethod.GET})
+    public String nextTicket() {
         ticketService.nextTicket();
+        return "NEXT TICKET";
     }
 
     @RequestMapping(value = "/current", method = {RequestMethod.GET})
