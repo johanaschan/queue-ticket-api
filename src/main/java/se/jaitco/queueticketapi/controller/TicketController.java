@@ -28,7 +28,7 @@ public class TicketController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "/next", method = {RequestMethod.PATCH})
+    @RequestMapping(value = "/next", method = {RequestMethod.POST})
     public void nextTicket() {
         ticketService.nextTicket();
     }
