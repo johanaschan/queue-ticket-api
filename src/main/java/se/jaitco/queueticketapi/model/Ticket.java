@@ -2,19 +2,17 @@ package se.jaitco.queueticketapi.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.Value;
+import lombok.*;
 
 //@Value
 //@Builder
 //@JsonDeserialize(builder = Ticket.TicketBuilder.class)
+@Data
 public class Ticket {
 
-    @Getter @Setter private long number;
+    long number;
 
-    @Getter @Setter private long time;
+    private long time;
 
     public Ticket(){
 
