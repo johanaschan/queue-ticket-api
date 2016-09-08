@@ -8,6 +8,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import se.jaitco.queueticketapi.model.Ticket;
+import se.jaitco.queueticketapi.model.TicketTime;
 
 import java.util.Optional;
 
@@ -19,6 +20,8 @@ import java.util.Optional;
 public class TicketService {
 
     private static final String TICKET_QUEUE = "TICKET_QUEUE";
+
+    private static final String TICKET_DURATION = "TICKET_DURATION";
 
     private static final String TICKET_LOCK = "TICKET_LOCK";
 
@@ -57,7 +60,8 @@ public class TicketService {
         RLock ticketLock = ticketLock();
         ticketLock.lock();
         try {
-            tickets().poll();
+            Ticket ticket = tickets().poll();
+            ticketTimes().add(createTicketTimeFromTicket(ticket));
         } finally {
             ticketLock.unlock();
         }
@@ -73,6 +77,26 @@ public class TicketService {
         ticket.setNumber(number);
         ticket.setTime(System.nanoTime());
         return ticket;
+    }
+
+    private TicketTime createTicketTimeFromTicket(Ticket ticket) {
+        return createTicketTime(ticket.getTime(),System.nanoTime());
+    }
+
+    private TicketTime createTicketTime(long startTime,long endTime) {
+        return ticketTime(endTime,startTime - endTime);
+    }
+
+    private TicketTime ticketTime(long timeStamp,long duration) {
+        TicketTime ticketTime = new TicketTime();
+        ticketTime.setTimeStamp(timeStamp);
+        ticketTime.setDuration(duration);
+        return ticketTime;
+    }
+
+
+    private RDeque<TicketTime> ticketTimes() {
+        return redissonClient.getDeque(TICKET_DURATION);
     }
 
     private RDeque<Ticket> tickets() {
