@@ -16,9 +16,9 @@ public class TicketController {
     @Autowired
     private TicketService ticketService;
 
-    @RequestMapping(value = "/take", method = RequestMethod.GET)
+    @RequestMapping(value = "/new", method = RequestMethod.GET)
     public Ticket takeTicket() {
-        return ticketService.takeTicket();
+        return ticketService.newTicket();
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

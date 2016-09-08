@@ -20,7 +20,7 @@ public class SwaggerConfig {
     public Docket docket() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("se.jaitco.controller"))
+                .apis(RequestHandlerSelectors.basePackage("se.jaitco.queueticketapi.controller"))
                 .build()
                 .apiInfo(apiInfo());
     }
