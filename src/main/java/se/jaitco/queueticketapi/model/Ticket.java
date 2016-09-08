@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class Ticket {
 
-    private Long time;
+    private long time;
 
-    private Long number;
+    private long number;
 }

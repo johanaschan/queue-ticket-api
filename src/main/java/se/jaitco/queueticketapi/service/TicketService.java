@@ -80,14 +80,14 @@ public class TicketService {
     }
 
     private TicketTime createTicketTimeFromTicket(Ticket ticket) {
-        return createTicketTime(ticket.getTime(),System.nanoTime());
+        return createTicketTime(ticket.getTime(), System.nanoTime());
     }
 
-    private TicketTime createTicketTime(long startTime,long endTime) {
-        return ticketTime(endTime,startTime - endTime);
+    private TicketTime createTicketTime(long startTime, long endTime) {
+        return ticketTime(endTime, startTime - endTime);
     }
 
-    private TicketTime ticketTime(long timeStamp,long duration) {
+    private TicketTime ticketTime(long timeStamp, long duration) {
         TicketTime ticketTime = new TicketTime();
         ticketTime.setTimeStamp(timeStamp);
         ticketTime.setDuration(duration);
