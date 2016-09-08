@@ -16,11 +16,15 @@ public class RedisConfig {
     @Value("${redis.url}")
     private String redisUrl;
 
+    @Value("${redis.password}")
+    private String redisPassword;
+
     @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useSingleServer()
-                .setAddress(redisUrl);
+                .setAddress(redisUrl)
+                .setPassword(redisPassword);
         return Redisson.create(config);
     }
 
