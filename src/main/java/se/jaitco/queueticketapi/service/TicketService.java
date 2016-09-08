@@ -94,7 +94,6 @@ public class TicketService {
         return ticketTime;
     }
 
-
     private RDeque<TicketTime> ticketTimes() {
         return redissonClient.getDeque(TICKET_DURATION);
     }
