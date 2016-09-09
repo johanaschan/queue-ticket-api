@@ -20,9 +20,7 @@ import java.util.Optional;
 public class TicketService {
 
     private static final String TICKET_QUEUE = "TICKET_QUEUE";
-
     private static final String TICKET_DURATION = "TICKET_DURATION";
-
     private static final String TICKET_LOCK = "TICKET_LOCK";
 
     @Autowired
