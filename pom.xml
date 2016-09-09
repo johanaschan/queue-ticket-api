@@ -98,6 +98,7 @@
               <goal>unpack-dependencies</goal>
             </goals>
             <configuration>
+              <includeGroupIds>com.newrelic.agent.java</includeGroupIds>
               <includeArtifactIds>newrelic-java</includeArtifactIds>
               <type>zip</type>
               <outputDirectory>./</outputDirectory>
