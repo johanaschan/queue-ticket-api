@@ -8,6 +8,8 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import se.jaitco.queueticketapi.model.Ticket;
+import se.jaitco.queueticketapi.model.TicketNumber;
+import se.jaitco.queueticketapi.model.TicketStatus;
 import se.jaitco.queueticketapi.model.TicketTime;
 
 import java.util.Optional;
@@ -49,6 +51,7 @@ public class TicketService {
         ticketLock.lock();
         try {
             tickets().delete();
+            ticketTimes().delete();
         } finally {
             ticketLock.unlock();
         }
@@ -70,6 +73,37 @@ public class TicketService {
         return Optional.ofNullable(ticketQueue.peek());
     }
 
+    public TicketStatus getTicketStatus(TicketNumber ticketNumber) {
+        Optional<Ticket> currentTicket = currentTicket();
+        if(currentTicket.isPresent()){
+            long numberBefore = calculateNumberBefore(currentTicket.get(),ticketNumber);
+            long estimatedWaitTime = calculateEstimatedWaitTime(numberBefore);
+            return new TicketStatus(numberBefore,estimatedWaitTime);
+        }else{
+            return new TicketStatus(0,0);
+        }
+    }
+
+    private long calculateEstimatedWaitTime(long numberBefore) {
+        return calculateMeanTime() * numberBefore;
+    }
+    private long calculateMeanTime(){
+        long count = 0;
+        long totalDuration = 0;
+        for(TicketTime ticketTime : ticketTimes()){
+            totalDuration = ticketTime.getDuration();
+            count++;
+        }
+        if(count == 0) {
+            return 1000;
+        }
+        return totalDuration/count;
+    }
+
+    private long calculateNumberBefore(Ticket currentTicket, TicketNumber ticketNumber) {
+       return  ticketNumber.getNumber() - currentTicket.getNumber();
+    }
+
     private Ticket ticket(long number) {
         Ticket ticket = new Ticket();
         ticket.setNumber(number);
@@ -82,7 +116,7 @@ public class TicketService {
     }
 
     private TicketTime createTicketTime(long startTime, long endTime) {
-        return ticketTime(endTime, startTime - endTime);
+        return ticketTime(endTime,endTime - startTime);
     }
 
     private TicketTime ticketTime(long timeStamp, long duration) {
