@@ -7,8 +7,6 @@ import se.jaitco.queueticketapi.model.Ticket;
 import se.jaitco.queueticketapi.model.TicketStatus;
 import se.jaitco.queueticketapi.service.TicketService;
 
-import javax.validation.constraints.Min;
-
 @RestController
 @RequestMapping("/tickets")
 public class TicketController {
@@ -39,7 +37,7 @@ public class TicketController {
     }
 
     @RequestMapping(value = "/ticketstatus/{ticketNumber}", method = {RequestMethod.GET})
-    public TicketStatus ticketStatus(@PathVariable("ticketNumber") @Min(1) long ticketNumber) {
+    public TicketStatus ticketStatus(@PathVariable("ticketNumber") long ticketNumber) {
         return ticketService.ticketStatus(ticketNumber).orElse(null);
     }
 
