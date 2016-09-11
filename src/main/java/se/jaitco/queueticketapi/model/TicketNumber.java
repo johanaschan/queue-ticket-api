@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 @Value
 public class TicketNumber {
 
-    @Min(0)
+    @Min(1)
     @NotNull
     long number;
 

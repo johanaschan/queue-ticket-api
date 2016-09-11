@@ -37,11 +37,9 @@ public class TicketController {
         return ticketService.currentTicket().orElse(null);
     }
 
-
-    @RequestMapping(value = "/ticketStatus/{ticketNumber}", method = {RequestMethod.GET})
+    @RequestMapping(value = "/ticketstatus/{ticketNumber}", method = {RequestMethod.GET})
     public TicketStatus ticketStatus(@PathVariable("ticketNumber") TicketNumber ticketNumber) {
-        return ticketService.getTicketStatus(ticketNumber);
+        return ticketService.getTicketStatus(ticketNumber).orElse(null);
     }
-
 
 }

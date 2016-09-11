@@ -14,16 +14,13 @@ import se.jaitco.queueticketapi.model.TicketTime;
 
 import java.util.Optional;
 
-/**
- * Created by Johan Aschan on 2016-08-31.
- */
 @Slf4j
 @Component
 public class TicketService {
 
-    private static final String TICKET_QUEUE = "TICKET_QUEUE";
-    private static final String TICKET_DURATION = "TICKET_DURATION";
-    private static final String TICKET_LOCK = "TICKET_LOCK";
+    protected static final String TICKET_QUEUE = "TICKET_QUEUE";
+    protected static final String TICKET_TIMES = "TICKET_TIMES";
+    protected static final String TICKET_LOCK = "TICKET_LOCK";
 
     @Autowired
     private RedissonClient redissonClient;
@@ -73,15 +70,15 @@ public class TicketService {
         return Optional.ofNullable(ticketQueue.peek());
     }
 
-    public TicketStatus getTicketStatus(TicketNumber ticketNumber) {
-        Optional<Ticket> currentTicket = currentTicket();
-        if (currentTicket.isPresent()) {
-            long numberBefore = calculateNumberBefore(currentTicket.get(), ticketNumber);
-            long estimatedWaitTime = calculateEstimatedWaitTime(numberBefore);
-            return new TicketStatus(numberBefore, estimatedWaitTime);
-        } else {
-            return new TicketStatus(0, 0);
-        }
+    public Optional<TicketStatus> getTicketStatus(TicketNumber ticketNumber) {
+        return currentTicket().map(currentTicket -> {
+            long numbersBefore = calculateNumbersBefore(currentTicket, ticketNumber);
+            long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
+            return Optional.of(TicketStatus.builder()
+                    .numbersBefore(numbersBefore)
+                    .estimatedWaitTime(estimatedWaitTime)
+                    .build());
+        }).orElse(Optional.empty());
     }
 
     private long calculateEstimatedWaitTime(long numberBefore) {
@@ -89,19 +86,19 @@ public class TicketService {
     }
 
     private long calculateMeanTime() {
-        long count = 0;
-        long totalDuration = 0;
-        for (TicketTime ticketTime : ticketTimes()) {
-            totalDuration = ticketTime.getDuration();
-            count++;
+        RDeque<TicketTime> ticketTimes = ticketTimes();
+        long totalDuration = ticketTimes().stream()
+                .mapToLong(TicketTime::getDuration)
+                .sum();
+
+        long meanTime = 0;
+        if (!ticketTimes.isEmpty()) {
+            meanTime = totalDuration / ticketTimes.size();
         }
-        if (count == 0) {
-            return 1000;
-        }
-        return totalDuration / count;
+        return meanTime;
     }
 
-    private long calculateNumberBefore(Ticket currentTicket, TicketNumber ticketNumber) {
+    private long calculateNumbersBefore(Ticket currentTicket, TicketNumber ticketNumber) {
         return ticketNumber.getNumber() - currentTicket.getNumber();
     }
 
@@ -128,7 +125,7 @@ public class TicketService {
     }
 
     private RDeque<TicketTime> ticketTimes() {
-        return redissonClient.getDeque(TICKET_DURATION);
+        return redissonClient.getDeque(TICKET_TIMES);
     }
 
     private RDeque<Ticket> tickets() {
