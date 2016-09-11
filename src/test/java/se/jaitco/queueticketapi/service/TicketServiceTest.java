@@ -9,9 +9,7 @@ import org.redisson.api.RedissonClient;
 import se.jaitco.queueticketapi.model.Ticket;
 import se.jaitco.queueticketapi.model.TicketTime;
 
-import static se.jaitco.queueticketapi.service.TicketService.TICKET_LOCK;
-import static se.jaitco.queueticketapi.service.TicketService.TICKET_QUEUE;
-import static se.jaitco.queueticketapi.service.TicketService.TICKET_TIMES;
+import static se.jaitco.queueticketapi.service.TicketService.*;
 
 public class TicketServiceTest {
 
@@ -35,7 +33,7 @@ public class TicketServiceTest {
         MockitoAnnotations.initMocks(this);
         Mockito.when(redissonClient.getLock(TICKET_LOCK))
                 .thenReturn(rLock);
-        Mockito.when(redissonClient.getDeque(TICKET_QUEUE))
+        Mockito.when(redissonClient.getDeque(TICKETS))
                 .thenReturn(tickets);
         Mockito.when(redissonClient.getDeque(TICKET_TIMES))
                 .thenReturn(ticketTimes);

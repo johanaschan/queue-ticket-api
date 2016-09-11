@@ -18,7 +18,7 @@ import java.util.Optional;
 @Component
 public class TicketService {
 
-    protected static final String TICKET_QUEUE = "TICKET_QUEUE";
+    protected static final String TICKETS = "TICKETS";
     protected static final String TICKET_TIMES = "TICKET_TIMES";
     protected static final String TICKET_LOCK = "TICKET_LOCK";
 
@@ -129,7 +129,7 @@ public class TicketService {
     }
 
     private RDeque<Ticket> tickets() {
-        return redissonClient.getDeque(TICKET_QUEUE);
+        return redissonClient.getDeque(TICKETS);
     }
 
     private RLock ticketLock() {
