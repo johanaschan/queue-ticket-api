@@ -1,6 +1,5 @@
 package se.jaitco.queueticketapi.model;
 
-import lombok.Data;
 import lombok.Value;
 
 import javax.validation.constraints.Min;
@@ -13,7 +12,7 @@ public class TicketNumber {
     @NotNull
     long number;
 
-    public TicketNumber(String number){
+    public TicketNumber(String number) {
         this.number = Long.parseLong(number);
     }
 

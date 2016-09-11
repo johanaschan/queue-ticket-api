@@ -26,7 +26,7 @@ public class RedisConfig {
         SingleServerConfig singleServerConfig = config.useSingleServer()
                 .setAddress(redisUrl);
 
-        if(!redisPassword.isEmpty()){
+        if (!redisPassword.isEmpty()) {
             singleServerConfig.setPassword(redisPassword);
         }
         return Redisson.create(config);

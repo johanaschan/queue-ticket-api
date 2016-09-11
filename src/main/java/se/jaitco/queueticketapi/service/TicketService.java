@@ -75,33 +75,34 @@ public class TicketService {
 
     public TicketStatus getTicketStatus(TicketNumber ticketNumber) {
         Optional<Ticket> currentTicket = currentTicket();
-        if(currentTicket.isPresent()){
-            long numberBefore = calculateNumberBefore(currentTicket.get(),ticketNumber);
+        if (currentTicket.isPresent()) {
+            long numberBefore = calculateNumberBefore(currentTicket.get(), ticketNumber);
             long estimatedWaitTime = calculateEstimatedWaitTime(numberBefore);
-            return new TicketStatus(numberBefore,estimatedWaitTime);
-        }else{
-            return new TicketStatus(0,0);
+            return new TicketStatus(numberBefore, estimatedWaitTime);
+        } else {
+            return new TicketStatus(0, 0);
         }
     }
 
     private long calculateEstimatedWaitTime(long numberBefore) {
         return calculateMeanTime() * numberBefore;
     }
-    private long calculateMeanTime(){
+
+    private long calculateMeanTime() {
         long count = 0;
         long totalDuration = 0;
-        for(TicketTime ticketTime : ticketTimes()){
+        for (TicketTime ticketTime : ticketTimes()) {
             totalDuration = ticketTime.getDuration();
             count++;
         }
-        if(count == 0) {
+        if (count == 0) {
             return 1000;
         }
-        return totalDuration/count;
+        return totalDuration / count;
     }
 
     private long calculateNumberBefore(Ticket currentTicket, TicketNumber ticketNumber) {
-       return  ticketNumber.getNumber() - currentTicket.getNumber();
+        return ticketNumber.getNumber() - currentTicket.getNumber();
     }
 
     private Ticket ticket(long number) {
@@ -116,7 +117,7 @@ public class TicketService {
     }
 
     private TicketTime createTicketTime(long startTime, long endTime) {
-        return ticketTime(endTime,endTime - startTime);
+        return ticketTime(endTime, endTime - startTime);
     }
 
     private TicketTime ticketTime(long timeStamp, long duration) {
