@@ -32,7 +32,7 @@ public class TicketService {
             RDeque<Ticket> tickets = tickets();
             long newTicketNumber = 1;
             if (!tickets.isEmpty()) {
-                newTicketNumber = tickets.peek().getNumber() + 1;
+                newTicketNumber = tickets.peekLast().getNumber() + 1;
             }
             ticket = ticket(newTicketNumber);
             tickets.add(ticket);
@@ -70,8 +70,8 @@ public class TicketService {
     }
 
     public Optional<TicketStatus> ticketStatus(long ticketNumber) {
-        RLock ticketLock = ticketLock();
         Optional<TicketStatus> ticketStatus = Optional.empty();
+        RLock ticketLock = ticketLock();
         ticketLock.lock();
         try {
             ticketStatus = currentTicket().flatMap(currentTicket -> {

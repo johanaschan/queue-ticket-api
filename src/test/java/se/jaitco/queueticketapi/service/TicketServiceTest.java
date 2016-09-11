@@ -47,6 +47,8 @@ public class TicketServiceTest {
                 .thenReturn(ticket());
         Mockito.when(tickets.peek())
                 .thenReturn(ticket());
+        Mockito.when(tickets.peekLast())
+                .thenReturn(ticket());
         Mockito.when(ticketTimes.stream())
                 .thenReturn(ticketTimeStream());
         Mockito.when(ticketTimes.size())
