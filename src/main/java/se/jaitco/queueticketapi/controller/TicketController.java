@@ -16,7 +16,7 @@ public class TicketController {
     private TicketService ticketService;
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
-    public Ticket takeTicket() {
+    public Ticket newTicket() {
         return ticketService.newTicket();
     }
 
