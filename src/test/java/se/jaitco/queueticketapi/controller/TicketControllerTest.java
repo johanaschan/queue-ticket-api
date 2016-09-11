@@ -15,7 +15,6 @@ public class TicketControllerTest {
     @Mock
     private TicketService ticketService;
 
-
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
