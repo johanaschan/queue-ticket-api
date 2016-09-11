@@ -3,7 +3,6 @@ package se.jaitco.queueticketapi.controller;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
-import se.jaitco.queueticketapi.model.TicketNumber;
 import se.jaitco.queueticketapi.service.TicketService;
 
 import java.util.Optional;
@@ -54,12 +53,12 @@ public class TicketControllerTest {
 
     @Test
     public void testTicketStatus() {
-        Mockito.when(ticketService.getTicketStatus(Matchers.any(TicketNumber.class))).thenReturn(Optional.empty());
+        Mockito.when(ticketService.ticketStatus(Matchers.anyLong())).thenReturn(Optional.empty());
 
-        TicketNumber ticketNumber = new TicketNumber("10");
+        final long ticketNumber = 10;
         classUnderTest.ticketStatus(ticketNumber);
 
-        Mockito.verify(ticketService, Mockito.times(1)).getTicketStatus(ticketNumber);
+        Mockito.verify(ticketService, Mockito.times(1)).ticketStatus(ticketNumber);
     }
 
 }

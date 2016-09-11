@@ -8,7 +8,6 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import se.jaitco.queueticketapi.model.Ticket;
-import se.jaitco.queueticketapi.model.TicketNumber;
 import se.jaitco.queueticketapi.model.TicketStatus;
 import se.jaitco.queueticketapi.model.TicketTime;
 
@@ -33,7 +32,7 @@ public class TicketService {
             RDeque<Ticket> tickets = tickets();
             long newTicketNumber = 1;
             if (!tickets.isEmpty()) {
-                newTicketNumber = tickets.peekLast().getNumber() + 1;
+                newTicketNumber = tickets.peek().getNumber() + 1;
             }
             ticket = ticket(newTicketNumber);
             tickets.add(ticket);
@@ -70,15 +69,23 @@ public class TicketService {
         return Optional.ofNullable(ticketQueue.peek());
     }
 
-    public Optional<TicketStatus> getTicketStatus(TicketNumber ticketNumber) {
-        return currentTicket().map(currentTicket -> {
-            long numbersBefore = calculateNumbersBefore(currentTicket, ticketNumber);
-            long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
-            return Optional.of(TicketStatus.builder()
-                    .numbersBefore(numbersBefore)
-                    .estimatedWaitTime(estimatedWaitTime)
-                    .build());
-        }).orElse(Optional.empty());
+    public Optional<TicketStatus> ticketStatus(long ticketNumber) {
+        RLock ticketLock = ticketLock();
+        Optional<TicketStatus> ticketStatus = Optional.empty();
+        ticketLock.lock();
+        try {
+            ticketStatus = currentTicket().flatMap(currentTicket -> {
+                long numbersBefore = calculateNumbersBefore(currentTicket, ticketNumber);
+                long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
+                return Optional.of(TicketStatus.builder()
+                        .numbersBefore(numbersBefore)
+                        .estimatedWaitTime(estimatedWaitTime)
+                        .build());
+            });
+        } finally {
+            ticketLock.unlock();
+        }
+        return ticketStatus;
     }
 
     private long calculateEstimatedWaitTime(long numberBefore) {
@@ -87,7 +94,7 @@ public class TicketService {
 
     private long calculateMeanTime() {
         RDeque<TicketTime> ticketTimes = ticketTimes();
-        long totalDuration = ticketTimes().stream()
+        long totalDuration = ticketTimes.stream()
                 .mapToLong(TicketTime::getDuration)
                 .sum();
 
@@ -98,8 +105,8 @@ public class TicketService {
         return meanTime;
     }
 
-    private long calculateNumbersBefore(Ticket currentTicket, TicketNumber ticketNumber) {
-        return ticketNumber.getNumber() - currentTicket.getNumber();
+    private long calculateNumbersBefore(Ticket currentTicket, long ticketNumber) {
+        return ticketNumber - currentTicket.getNumber();
     }
 
     private Ticket ticket(long number) {

@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import se.jaitco.queueticketapi.model.Ticket;
-import se.jaitco.queueticketapi.model.TicketNumber;
 import se.jaitco.queueticketapi.model.TicketStatus;
 import se.jaitco.queueticketapi.service.TicketService;
+
+import javax.validation.constraints.Min;
 
 @RestController
 @RequestMapping("/tickets")
@@ -38,8 +39,8 @@ public class TicketController {
     }
 
     @RequestMapping(value = "/ticketstatus/{ticketNumber}", method = {RequestMethod.GET})
-    public TicketStatus ticketStatus(@PathVariable("ticketNumber") TicketNumber ticketNumber) {
-        return ticketService.getTicketStatus(ticketNumber).orElse(null);
+    public TicketStatus ticketStatus(@PathVariable("ticketNumber") @Min(1) long ticketNumber) {
+        return ticketService.ticketStatus(ticketNumber).orElse(null);
     }
 
 }
