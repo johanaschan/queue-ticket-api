@@ -115,6 +115,14 @@ public class TicketServiceTest {
         Mockito.verify(rLock, Mockito.times(1)).unlock();
     }
 
+    @Test
+    public void testTicketStatusLowNumber() {
+        final long ticketNumber = 0L;
+        Optional<TicketStatus> ticketStatus = classUnderTest.ticketStatus(ticketNumber);
+        
+        Assert.assertThat(ticketStatus, is(Optional.empty()));
+    }
+
     private Ticket ticket() {
         Ticket ticket = new Ticket();
         ticket.setNumber(1);

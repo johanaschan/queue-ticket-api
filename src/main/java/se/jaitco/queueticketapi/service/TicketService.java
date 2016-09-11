@@ -75,12 +75,16 @@ public class TicketService {
         ticketLock.lock();
         try {
             ticketStatus = currentTicket().flatMap(currentTicket -> {
-                long numbersBefore = calculateNumbersBefore(currentTicket, ticketNumber);
-                long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
-                return Optional.of(TicketStatus.builder()
-                        .numbersBefore(numbersBefore)
-                        .estimatedWaitTime(estimatedWaitTime)
-                        .build());
+                if (ticketNumber >= currentTicket.getNumber()) {
+                    long numbersBefore = calculateNumbersBefore(currentTicket, ticketNumber);
+                    long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
+                    return Optional.of(TicketStatus.builder()
+                            .numbersBefore(numbersBefore)
+                            .estimatedWaitTime(estimatedWaitTime)
+                            .build());
+                } else {
+                    return Optional.empty();
+                }
             });
         } finally {
             ticketLock.unlock();
