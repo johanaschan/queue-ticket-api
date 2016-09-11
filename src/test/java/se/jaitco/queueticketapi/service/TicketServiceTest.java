@@ -119,8 +119,16 @@ public class TicketServiceTest {
     public void testTicketStatusLowNumber() {
         final long ticketNumber = 0L;
         Optional<TicketStatus> ticketStatus = classUnderTest.ticketStatus(ticketNumber);
-        
+
         Assert.assertThat(ticketStatus, is(Optional.empty()));
+    }
+
+    @Test
+    public void testTicketStatusSameAsCurrent() {
+        final long ticketNumber = 1L;
+        Optional<TicketStatus> ticketStatus = classUnderTest.ticketStatus(ticketNumber);
+
+        Assert.assertThat(ticketStatus.get().getEstimatedWaitTime(), is(0L));
     }
 
     private Ticket ticket() {
