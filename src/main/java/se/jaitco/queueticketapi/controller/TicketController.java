@@ -42,7 +42,7 @@ public class TicketController {
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    private static class NotFoundException extends RuntimeException {
+    protected static class NotFoundException extends RuntimeException {
     }
 }
 

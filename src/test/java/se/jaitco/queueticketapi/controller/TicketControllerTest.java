@@ -3,6 +3,8 @@ package se.jaitco.queueticketapi.controller;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+import se.jaitco.queueticketapi.model.Ticket;
+import se.jaitco.queueticketapi.model.TicketStatus;
 import se.jaitco.queueticketapi.service.TicketService;
 
 import java.util.Optional;
@@ -43,21 +45,33 @@ public class TicketControllerTest {
 
     @Test
     public void testCurrentTicket() {
-        Mockito.when(ticketService.currentTicket()).thenReturn(Optional.empty());
-
+        Mockito.when(ticketService.currentTicket()).thenReturn(Optional.of(new Ticket()));
         classUnderTest.currentTicket();
 
         Mockito.verify(ticketService, Mockito.times(1)).currentTicket();
     }
 
+    @Test(expected = TicketController.NotFoundException.class)
+    public void testCurrentTicketNotFound() {
+        Mockito.when(ticketService.currentTicket()).thenReturn(Optional.empty());
+        classUnderTest.currentTicket();
+    }
+
     @Test
     public void testTicketStatus() {
-        Mockito.when(ticketService.ticketStatus(Matchers.anyLong())).thenReturn(Optional.empty());
+        Mockito.when(ticketService.ticketStatus(Matchers.anyLong()))
+                .thenReturn(Optional.of(TicketStatus.builder().build()));
 
-        final long ticketNumber = 10;
+        final long ticketNumber = 10L;
         classUnderTest.ticketStatus(ticketNumber);
 
         Mockito.verify(ticketService, Mockito.times(1)).ticketStatus(ticketNumber);
+    }
+
+    @Test(expected = TicketController.NotFoundException.class)
+    public void testTicketStatusNotFound() {
+        Mockito.when(ticketService.ticketStatus(Matchers.anyLong())).thenReturn(Optional.empty());
+        classUnderTest.ticketStatus(10L);
     }
 
 }
