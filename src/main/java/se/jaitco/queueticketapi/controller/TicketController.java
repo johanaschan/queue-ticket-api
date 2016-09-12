@@ -50,4 +50,3 @@ public class TicketController {
     protected static class NotFoundException extends RuntimeException {
     }
 }
-

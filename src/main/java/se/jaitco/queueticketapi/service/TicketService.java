@@ -53,7 +53,6 @@ public class TicketService {
         }
     }
 
-
     public void resetTickets() {
         RLock ticketLock = ticketLock();
         ticketLock.lock();
