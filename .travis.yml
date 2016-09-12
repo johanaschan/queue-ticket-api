@@ -3,4 +3,4 @@ jdk: oraclejdk8
 notifications:
   slack: jaitco:JBPEQp5GkLTR9mmDrEpVABW4
 after_success:
-  - coveralls
+  - mvn coveralls:report
