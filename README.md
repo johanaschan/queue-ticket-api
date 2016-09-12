@@ -3,3 +3,14 @@
 [![coverity](https://scan.coverity.com/projects/10157/badge.svg)](https://scan.coverity.com/projects/johanaschan-queue-ticket-api)
 
 # QueueTicketApi
+REST-API for QueueTicket built with Spring Boot and deployed at Heroku.
+
+### Swagger ###
+Swagger is exposed at /v2/api-docs
+
+### Lombok ###
+[Project Lombok](http://projectlombok.org/) is used to get rid of boilerplate code.
+
+To use this with Idea, install the Lombok Plugin (available from the plugin repository),
+and enable _Enable Annotation Processing_ _(Preferences_ -> _Build, Execution, Deployment_ ->
+_Compiler_ -> _Annotation Processors)_.
