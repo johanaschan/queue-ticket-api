@@ -33,12 +33,16 @@ public class TicketController {
 
     @RequestMapping(value = "/current", method = {RequestMethod.GET})
     public Ticket currentTicket() {
-        return ticketService.currentTicket().orElse(null);
+        return ticketService.currentTicket().orElseThrow(NotFoundException::new);
     }
 
     @RequestMapping(value = "/ticketstatus/{ticketNumber}", method = {RequestMethod.GET})
     public TicketStatus ticketStatus(@PathVariable("ticketNumber") long ticketNumber) {
-        return ticketService.ticketStatus(ticketNumber).orElse(null);
+        return ticketService.ticketStatus(ticketNumber).orElseThrow(NotFoundException::new);
     }
 
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    private static class NotFoundException extends RuntimeException {
+    }
 }
+
