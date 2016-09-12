@@ -19,6 +19,11 @@ public class TicketController {
         return ticketService.newTicket();
     }
 
+    @RequestMapping(value = "drop/{ticketNumber}", method = RequestMethod.GET)
+    public void dropTicket(@PathVariable("ticketNumber") long ticketNumber) {
+        ticketService.dropTicket(ticketNumber);
+    }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/reset", method = {RequestMethod.DELETE})
     public void resetTickets() {

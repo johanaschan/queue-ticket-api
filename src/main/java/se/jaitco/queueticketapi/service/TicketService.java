@@ -42,6 +42,18 @@ public class TicketService {
         return ticket;
     }
 
+    public void dropTicket(long ticketNumber) {
+        RLock ticketLock = ticketLock();
+        ticketLock.lock();
+        try {
+            RDeque<Ticket> tickets = tickets();
+            tickets.remove(ticket(ticketNumber));
+        } finally {
+            ticketLock.unlock();
+        }
+    }
+
+
     public void resetTickets() {
         RLock ticketLock = ticketLock();
         ticketLock.lock();
