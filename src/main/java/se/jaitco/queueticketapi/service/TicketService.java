@@ -47,7 +47,10 @@ public class TicketService {
         ticketLock.lock();
         try {
             RDeque<Ticket> tickets = tickets();
-            tickets.remove(ticket(ticketNumber));
+            Optional<Ticket> ticket = tickets.stream().filter(t -> t.getNumber() == ticketNumber).findAny();
+            if(ticket.isPresent()){
+                tickets.remove(ticket.get());
+            }
         } finally {
             ticketLock.unlock();
         }

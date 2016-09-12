@@ -19,7 +19,8 @@ public class TicketController {
         return ticketService.newTicket();
     }
 
-    @RequestMapping(value = "drop/{ticketNumber}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "drop/{ticketNumber}", method = RequestMethod.DELETE)
     public void dropTicket(@PathVariable("ticketNumber") long ticketNumber) {
         ticketService.dropTicket(ticketNumber);
     }
@@ -50,3 +51,4 @@ public class TicketController {
     protected static class NotFoundException extends RuntimeException {
     }
 }
+
