@@ -1,15 +1,20 @@
 language: java
 jdk: oraclejdk8
+
 notifications:
   slack:
     secure: Zg3TANonRFYnSTy+liZ3omNaZ3ecI1a4ffUBn4njZ6oKxXrmqG7BkpVlrrM17tWSJwzOmi03KKcoJWMHl8txyQdtmBNyNaKdKnsbi19hxDsUPoC6fMvP4RryQesbla+SzVbrdFQAlD+oeyFSjVuHBnEU6hXKaEXrzNgeE85K0EcX3ZBaxR1v/egJi3tjxtkfVJhb3aOmDp4ZskU7VKbuHkEwv4GCMmHejMTG13fBn13WkjFz/AlnjOTX5wBr80Kyhvt/RO2Ojq3YWVYF9ODRpWB1vwUkb6nWxATJcEdslqWmiiisuHH6FAlCYCYySrch1CJLE/oT3ZPm4uJ/6nRNqOFZMt3jqoa39AIldBRz5hJC36UKYCpFir58cN6pBCleshXHJCqdLAmzKHhKo4cFsiRtkazSmZ5P9tvZCOCgICCcN4ZIL4NxWK2cmd9wZq2UT6AiFZSiKJ/8SZLvBcxwQA2TGvWIV/65MqAIirt3t3ldSTJzlCluWJhkwY41W3qN9tlCmg0lyAJS1Vgs9n6q3fBqVOiUqNAC/tFE5R2+KQ8Vdgh0R5yFGaAyNtvH9f/x6YOmS9zGOrsSEeyxlV2uaDxrryD4IrLLe2WaAEAgIcjxQXHfVsoxAQ6NuV6hcMz1ZP51AYYZNyxK0274mvr/EIEf3IBz501RPXTnJtsGs94=
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
 env:
   global:
    - secure: "gKYg5Dju6670tTkmTx+CQ0kkVTP5crcTUJfDZVSxx3WTfBw/UfcXnLbE913/8Qcar/7Ld1j00gakgLj7yCFus35qMU7OeOEK90gJ7S2ND4X6giTnU6SF7WqGBRODgTeI9pEMMvMJDkXJBTuu/t5Bg+wwywiyPLmMFthP+SQpSpwCwR4pys49LIR6Z+XdwhMhbYAG9u4CRCDiJmsLby2j+Z6m7WIQNkNZIHE4nJY5XRtqty8kDeckQtR5oxUCrYDU4QJ91Ms+iiICJRDxui6nqc6113YcuQamIIDdO6D+E17O8gy07z6fmG/vQHjn5T2scKb3jh6FjEQ7w9l67TmV6PmNQfL+z9tSntI9mS6EpjoosMriO5GOmDt+7oB/RySxYOhpepwIHVLq2yoL/MdccAwt6AA0oBex51we/bN0Ru4Ebg5XySlaR1BLug0QAB51c+8gc1+6KNhF6zKEbb4SdCmjfXf2UfMhT0y+yMraQvKBPyLi6xPm17YwNOdoA7rKoxlhpHw6VF9xf089vUpV/b7iPSiVtRxp4GkDZ83TxxU2Mt614pWUvw1IYCCC33MweI/huLnUN84tYCovDvbvz7vq2naN9VlnB5lvVg4HcGcbMpF0Y3jd3kvP5fGNMJGHrP+CCerX9g77ReR6p5eTAy888gnQXrIdS1R7u40tz2k="
+
 before_install:
       - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
 addons:
   coverity_scan:
     project:
