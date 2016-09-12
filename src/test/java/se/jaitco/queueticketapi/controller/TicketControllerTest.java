@@ -31,9 +31,9 @@ public class TicketControllerTest {
 
     @Test
     public void testResetTickets() {
-        classUnderTest.newTicket();
+        classUnderTest.resetTickets();
 
-        Mockito.verify(ticketService, Mockito.times(1)).newTicket();
+        Mockito.verify(ticketService, Mockito.times(1)).resetTickets();
     }
 
     @Test
