@@ -74,4 +74,15 @@ public class TicketControllerTest {
         classUnderTest.ticketStatus(10L);
     }
 
+
+
+    @Test
+    public void testDropTicket() {
+        final long ticketNumber = 10L;
+        classUnderTest.dropTicket(ticketNumber);
+
+        Mockito.verify(ticketService, Mockito.times(1)).dropTicket(ticketNumber);
+    }
+
+
 }

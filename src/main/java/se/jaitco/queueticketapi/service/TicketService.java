@@ -49,7 +49,7 @@ public class TicketService {
             RDeque<Ticket> tickets = tickets();
             tickets.stream()
                     .filter(ticket -> ticket.getNumber() == ticketNumber)
-                    .map(tickets::remove);
+                    .forEach(tickets::remove);
         } finally {
             ticketLock.unlock();
         }

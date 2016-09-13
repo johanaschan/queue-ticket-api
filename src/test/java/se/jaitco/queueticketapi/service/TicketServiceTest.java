@@ -49,8 +49,10 @@ public class TicketServiceTest {
                 .thenReturn(ticket());
         Mockito.when(tickets.peekLast())
                 .thenReturn(ticket());
+        Mockito.when(tickets.stream())
+                .thenReturn(Stream.of(ticket()));
         Mockito.when(ticketTimes.stream())
-                .thenReturn(ticketTimeStream());
+                .thenReturn(Stream.of(ticketTime()));
         Mockito.when(ticketTimes.size())
                 .thenReturn(1);
     }
@@ -131,6 +133,19 @@ public class TicketServiceTest {
         Assert.assertThat(ticketStatus.get().getEstimatedWaitTime(), is(0L));
     }
 
+    @Test
+    public void testDropTicket() {
+        final long ticketNumber = 1L;
+        classUnderTest.dropTicket(ticketNumber);
+
+        Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
+        Mockito.verify(rLock, Mockito.times(1)).lock();
+        Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
+        Mockito.verify(tickets, Mockito.times(1)).stream();
+        Mockito.verify(tickets, Mockito.times(1)).remove(Matchers.any(Ticket.class));
+        Mockito.verify(rLock, Mockito.times(1)).unlock();
+    }
+
     private Ticket ticket() {
         Ticket ticket = new Ticket();
         ticket.setNumber(1);
@@ -138,11 +153,11 @@ public class TicketServiceTest {
         return ticket;
     }
 
-    private Stream<Object> ticketTimeStream() {
+    private TicketTime ticketTime() {
         TicketTime ticketTime = new TicketTime();
         ticketTime.setDuration(1);
         ticketTime.setTimeStamp(System.nanoTime());
-        return Stream.of(ticketTime);
+        return ticketTime;
     }
 
 }
