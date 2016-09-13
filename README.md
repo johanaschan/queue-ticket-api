@@ -3,7 +3,7 @@
 [![coverity](https://scan.coverity.com/projects/10157/badge.svg)](https://scan.coverity.com/projects/johanaschan-queue-ticket-api)
 
 # QueueTicketApi
-REST-API for QueueTicket built with Spring Boot and deployed at Heroku.
+REST-API for QueueTicket built with Spring Boot, using Redis as a database and deployed at Heroku.
 
 ### Swagger ###
 Swagger is exposed at /v2/api-docs
