@@ -20,7 +20,7 @@ public class TicketController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value = "drop/{ticketNumber}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/drop/{ticketNumber}", method = RequestMethod.DELETE)
     public void dropTicket(@PathVariable("ticketNumber") long ticketNumber) {
         ticketService.dropTicket(ticketNumber);
     }
