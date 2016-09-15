@@ -87,14 +87,14 @@ public class TicketService {
         RLock ticketLock = ticketLock();
         ticketLock.lock();
         try {
-            long numbersBefore = calculateNumbersBefore(tickets(),ticketNumber);
-            if(numbersBefore > 0) {
+            long numbersBefore = calculateNumbersBefore(tickets(), ticketNumber);
+            if (numbersBefore > 0) {
                 long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
                 ticketStatus = Optional.of(TicketStatus.builder()
                         .numbersBefore(numbersBefore)
                         .estimatedWaitTime(estimatedWaitTime)
                         .build());
-            }else{
+            } else {
                 ticketStatus = Optional.empty();
             }
         } finally {
@@ -121,7 +121,9 @@ public class TicketService {
     }
 
     private long calculateNumbersBefore(RQueue<Ticket> ticketQueue, long ticketNumber) {
-        return ticketQueue.stream().filter(ticket -> ticket.getNumber() > ticketNumber).count();
+        return ticketQueue.stream()
+                .filter(ticket -> ticket.getNumber() < ticketNumber)
+                .count();
     }
 
     private Ticket ticket(long number) {
