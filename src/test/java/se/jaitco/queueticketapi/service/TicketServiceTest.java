@@ -139,7 +139,7 @@ public class TicketServiceTest {
     }
 
     private List<Ticket> tickets() {
-        List<Ticket> tickets = new ArrayList<Ticket>();
+        List<Ticket> tickets = new ArrayList<>();
         tickets.add(createTicket(1, 1));
         tickets.add(createTicket(2, 1));
         tickets.add(createTicket(3, 1));
