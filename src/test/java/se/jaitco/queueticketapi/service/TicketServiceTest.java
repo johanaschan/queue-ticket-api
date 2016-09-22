@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
+import org.redisson.api.RAtomicLong;
 import org.redisson.api.RDeque;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -36,6 +37,9 @@ public class TicketServiceTest {
     @Mock
     private RDeque<Object> ticketTimes;
 
+    @Mock
+    private RAtomicLong ticketNumber;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -45,6 +49,8 @@ public class TicketServiceTest {
                 .thenReturn(tickets);
         Mockito.when(redissonClient.getDeque(TICKET_TIMES))
                 .thenReturn(ticketTimes);
+        Mockito.when(redissonClient.getAtomicLong(TICKET_NUMBER))
+                .thenReturn(ticketNumber);
         Mockito.when(tickets.poll())
                 .thenReturn(ticket());
         Mockito.when(tickets.peek())
@@ -57,6 +63,8 @@ public class TicketServiceTest {
                 .thenReturn(Stream.of(ticketTime()));
         Mockito.when(ticketTimes.size())
                 .thenReturn(1);
+        Mockito.when(ticketNumber.incrementAndGet())
+                .thenReturn(2L);
     }
 
     @Test
