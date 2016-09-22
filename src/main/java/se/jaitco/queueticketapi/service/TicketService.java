@@ -58,7 +58,9 @@ public class TicketService {
         ticketLock.lock();
         try {
             Ticket ticket = tickets().poll();
-            ticketTimes().add(createTicketTimeFromTicket(ticket));
+            if (ticket != null) {
+                ticketTimes().add(createTicketTimeFromTicket(ticket));
+            }
         } finally {
             ticketLock.unlock();
         }
