@@ -42,6 +42,19 @@ public class TicketService {
         return ticket;
     }
 
+    public void dropTicket(long ticketNumber) {
+        RLock ticketLock = ticketLock();
+        ticketLock.lock();
+        try {
+            RDeque<Ticket> tickets = tickets();
+            tickets.stream()
+                    .filter(ticket -> ticket.getNumber() == ticketNumber)
+                    .forEach(tickets::remove);
+        } finally {
+            ticketLock.unlock();
+        }
+    }
+
     public void resetTickets() {
         RLock ticketLock = ticketLock();
         ticketLock.lock();
@@ -76,18 +89,16 @@ public class TicketService {
         RLock ticketLock = ticketLock();
         ticketLock.lock();
         try {
-            ticketStatus = currentTicket().flatMap(currentTicket -> {
-                if (ticketNumber >= currentTicket.getNumber()) {
-                    long numbersBefore = calculateNumbersBefore(currentTicket, ticketNumber);
-                    long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
-                    return Optional.of(TicketStatus.builder()
-                            .numbersBefore(numbersBefore)
-                            .estimatedWaitTime(estimatedWaitTime)
-                            .build());
-                } else {
-                    return Optional.empty();
-                }
-            });
+            long numbersBefore = calculateNumbersBefore(tickets(), ticketNumber);
+            if (numbersBefore > 0) {
+                long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
+                ticketStatus = Optional.of(TicketStatus.builder()
+                        .numbersBefore(numbersBefore)
+                        .estimatedWaitTime(estimatedWaitTime)
+                        .build());
+            } else {
+                ticketStatus = Optional.empty();
+            }
         } finally {
             ticketLock.unlock();
         }
@@ -111,8 +122,10 @@ public class TicketService {
         return meanTime;
     }
 
-    private long calculateNumbersBefore(Ticket currentTicket, long ticketNumber) {
-        return ticketNumber - currentTicket.getNumber();
+    private long calculateNumbersBefore(RQueue<Ticket> ticketQueue, long ticketNumber) {
+        return ticketQueue.stream()
+                .filter(ticket -> ticket.getNumber() < ticketNumber)
+                .count();
     }
 
     private Ticket ticket(long number) {

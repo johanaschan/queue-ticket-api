@@ -11,6 +11,8 @@ import se.jaitco.queueticketapi.model.Ticket;
 import se.jaitco.queueticketapi.model.TicketStatus;
 import se.jaitco.queueticketapi.model.TicketTime;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -49,8 +51,10 @@ public class TicketServiceTest {
                 .thenReturn(ticket());
         Mockito.when(tickets.peekLast())
                 .thenReturn(ticket());
+        Mockito.when(tickets.stream())
+                .thenReturn(Stream.of(tickets().toArray()));
         Mockito.when(ticketTimes.stream())
-                .thenReturn(ticketTimeStream());
+                .thenReturn(Stream.of(ticketTime()));
         Mockito.when(ticketTimes.size())
                 .thenReturn(1);
     }
@@ -88,7 +92,6 @@ public class TicketServiceTest {
         Mockito.verify(rLock, Mockito.times(1)).lock();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKET_TIMES);
-        Mockito.verify(tickets, Mockito.times(1)).poll();
         Mockito.verify(ticketTimes, Mockito.times(1)).add(Matchers.any(TicketTime.class));
         Mockito.verify(rLock, Mockito.times(1)).unlock();
     }
@@ -110,7 +113,6 @@ public class TicketServiceTest {
         Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
         Mockito.verify(rLock, Mockito.times(1)).lock();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
-        Mockito.verify(tickets, Mockito.times(1)).peek();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKET_TIMES);
         Mockito.verify(rLock, Mockito.times(1)).unlock();
     }
@@ -124,25 +126,49 @@ public class TicketServiceTest {
     }
 
     @Test
-    public void testTicketStatusSameAsCurrent() {
+    public void testDropTicket() {
         final long ticketNumber = 1L;
-        Optional<TicketStatus> ticketStatus = classUnderTest.ticketStatus(ticketNumber);
+        classUnderTest.dropTicket(ticketNumber);
 
-        Assert.assertThat(ticketStatus.get().getEstimatedWaitTime(), is(0L));
+        Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
+        Mockito.verify(rLock, Mockito.times(1)).lock();
+        Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
+        Mockito.verify(tickets, Mockito.times(1)).stream();
+        Mockito.verify(tickets, Mockito.times(1)).remove(Matchers.any(Ticket.class));
+        Mockito.verify(rLock, Mockito.times(1)).unlock();
+    }
+
+    private List<Ticket> tickets() {
+        List<Ticket> tickets = new ArrayList<>();
+        tickets.add(createTicket(1, 1));
+        tickets.add(createTicket(2, 1));
+        tickets.add(createTicket(3, 1));
+        tickets.add(createTicket(4, 1));
+        tickets.add(createTicket(5, 1));
+        tickets.add(createTicket(6, 1));
+        tickets.add(createTicket(7, 1));
+        tickets.add(createTicket(8, 1));
+        tickets.add(createTicket(9, 1));
+        tickets.add(createTicket(10, 1));
+        return tickets;
     }
 
     private Ticket ticket() {
+        return createTicket(1, System.nanoTime());
+    }
+
+    private Ticket createTicket(long number, long time) {
         Ticket ticket = new Ticket();
-        ticket.setNumber(1);
-        ticket.setTime(System.nanoTime());
+        ticket.setNumber(number);
+        ticket.setTime(time);
         return ticket;
     }
 
-    private Stream<Object> ticketTimeStream() {
+    private TicketTime ticketTime() {
         TicketTime ticketTime = new TicketTime();
         ticketTime.setDuration(1);
         ticketTime.setTimeStamp(System.nanoTime());
-        return Stream.of(ticketTime);
+        return ticketTime;
     }
 
 }

@@ -20,6 +20,12 @@ public class TicketController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @RequestMapping(value = "/drop/{ticketNumber}", method = RequestMethod.DELETE)
+    public void dropTicket(@PathVariable("ticketNumber") long ticketNumber) {
+        ticketService.dropTicket(ticketNumber);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(value = "/reset", method = {RequestMethod.DELETE})
     public void resetTickets() {
         ticketService.resetTickets();
@@ -33,12 +39,16 @@ public class TicketController {
 
     @RequestMapping(value = "/current", method = {RequestMethod.GET})
     public Ticket currentTicket() {
-        return ticketService.currentTicket().orElse(null);
+        return ticketService.currentTicket().orElseThrow(NotFoundException::new);
     }
 
     @RequestMapping(value = "/ticketstatus/{ticketNumber}", method = {RequestMethod.GET})
     public TicketStatus ticketStatus(@PathVariable("ticketNumber") long ticketNumber) {
-        return ticketService.ticketStatus(ticketNumber).orElse(null);
+        return ticketService.ticketStatus(ticketNumber).orElseThrow(NotFoundException::new);
     }
 
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    protected static class NotFoundException extends RuntimeException {
+    }
 }
+

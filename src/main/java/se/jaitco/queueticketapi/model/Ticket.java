@@ -8,4 +8,5 @@ public class Ticket {
     private long time;
 
     private long number;
+
 }
