@@ -75,7 +75,9 @@ public class TicketServiceTest {
         Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
         Mockito.verify(rLock, Mockito.times(1)).lock();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
+        Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKET_NUMBER);
         Mockito.verify(tickets, Mockito.times(1)).add(Matchers.any(Ticket.class));
+        Mockito.verify(ticketNumber, Mockito.times(1)).incrementAndGet();
         Mockito.verify(rLock, Mockito.times(1)).unlock();
     }
 
@@ -87,9 +89,12 @@ public class TicketServiceTest {
         Mockito.verify(rLock, Mockito.times(1)).lock();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKET_TIMES);
+        Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKET_NUMBER);
         Mockito.verify(tickets, Mockito.times(1)).delete();
         Mockito.verify(ticketTimes, Mockito.times(1)).delete();
+        Mockito.verify(ticketNumber, Mockito.times(1)).set(0L);
         Mockito.verify(rLock, Mockito.times(1)).unlock();
+
     }
 
     @Test
