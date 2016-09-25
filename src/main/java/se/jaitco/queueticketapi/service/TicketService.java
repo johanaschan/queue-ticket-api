@@ -101,6 +101,10 @@ public class TicketService {
         return ticketStatus;
     }
 
+    public Integer size() {
+        return tickets().size();
+    }
+
     private long calculateEstimatedWaitTime(long numberBefore) {
         return calculateMeanTime() * numberBefore;
     }

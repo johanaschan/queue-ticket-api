@@ -72,41 +72,34 @@ public class TicketServiceTest {
         Ticket ticket = classUnderTest.newTicket();
 
         Assert.assertThat(ticket.getNumber(), is(2L));
-        Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
-        Mockito.verify(rLock, Mockito.times(1)).lock();
+        verifyLock();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKET_NUMBER);
         Mockito.verify(tickets, Mockito.times(1)).add(Matchers.any(Ticket.class));
         Mockito.verify(ticketNumber, Mockito.times(1)).incrementAndGet();
-        Mockito.verify(rLock, Mockito.times(1)).unlock();
     }
 
     @Test
     public void testResetTickets() {
         classUnderTest.resetTickets();
 
-        Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
-        Mockito.verify(rLock, Mockito.times(1)).lock();
+        verifyLock();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKET_TIMES);
         Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKET_NUMBER);
         Mockito.verify(tickets, Mockito.times(1)).delete();
         Mockito.verify(ticketTimes, Mockito.times(1)).delete();
         Mockito.verify(ticketNumber, Mockito.times(1)).set(0L);
-        Mockito.verify(rLock, Mockito.times(1)).unlock();
-
     }
 
     @Test
     public void testNextTicket() {
         classUnderTest.nextTicket();
 
-        Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
-        Mockito.verify(rLock, Mockito.times(1)).lock();
+        verifyLock();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKET_TIMES);
         Mockito.verify(ticketTimes, Mockito.times(1)).add(Matchers.any(TicketTime.class));
-        Mockito.verify(rLock, Mockito.times(1)).unlock();
     }
 
     @Test
@@ -122,12 +115,10 @@ public class TicketServiceTest {
         final long ticketNumber = 10L;
         Optional<TicketStatus> ticketStatus = classUnderTest.ticketStatus(ticketNumber);
 
+        verifyLock();
         Assert.assertThat(ticketStatus.get().getNumbersBefore(), is(9L));
-        Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
-        Mockito.verify(rLock, Mockito.times(1)).lock();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKET_TIMES);
-        Mockito.verify(rLock, Mockito.times(1)).unlock();
     }
 
     @Test
@@ -143,11 +134,24 @@ public class TicketServiceTest {
         final long ticketNumber = 1L;
         classUnderTest.dropTicket(ticketNumber);
 
-        Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
-        Mockito.verify(rLock, Mockito.times(1)).lock();
+        verifyLock();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(tickets, Mockito.times(1)).stream();
         Mockito.verify(tickets, Mockito.times(1)).remove(Matchers.any(Ticket.class));
+    }
+
+    @Test
+    public void testSize() {
+        classUnderTest.size();
+
+        Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
+        Mockito.verify(tickets, Mockito.times(1)).size();
+
+    }
+
+    private void verifyLock(){
+        Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
+        Mockito.verify(rLock, Mockito.times(1)).lock();
         Mockito.verify(rLock, Mockito.times(1)).unlock();
     }
 
