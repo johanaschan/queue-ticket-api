@@ -1,6 +1,5 @@
 package se.jaitco.queueticketapi.controller;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.*;
@@ -9,9 +8,6 @@ import se.jaitco.queueticketapi.model.TicketStatus;
 import se.jaitco.queueticketapi.service.TicketService;
 
 import java.util.Optional;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 
 public class TicketControllerTest {
 
@@ -55,12 +51,10 @@ public class TicketControllerTest {
         Mockito.verify(ticketService, Mockito.times(1)).currentTicket();
     }
 
-    @Test
+    @Test(expected = TicketController.NotFoundException.class)
     public void testCurrentTicketNotFound() {
         Mockito.when(ticketService.currentTicket()).thenReturn(Optional.empty());
-        Ticket ticket = classUnderTest.currentTicket();
-
-        Assert.assertThat(ticket, is(nullValue()));
+        classUnderTest.currentTicket();
     }
 
     @Test
