@@ -39,7 +39,7 @@ public class TicketController {
 
     @RequestMapping(value = "/current", method = {RequestMethod.GET})
     public Ticket currentTicket() {
-        return ticketService.currentTicket().orElseThrow(NotFoundException::new);
+        return ticketService.currentTicket().orElse(null);
     }
 
     @RequestMapping(value = "/ticketstatus/{ticketNumber}", method = {RequestMethod.GET})
