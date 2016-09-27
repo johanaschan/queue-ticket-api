@@ -1,10 +1,7 @@
 package se.jaitco.queueticketapi.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RDeque;
-import org.redisson.api.RLock;
-import org.redisson.api.RQueue;
-import org.redisson.api.RedissonClient;
+import org.redisson.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import se.jaitco.queueticketapi.model.Ticket;
@@ -18,6 +15,7 @@ public class TicketService {
 
     protected static final String TICKETS = "TICKETS";
     protected static final String TICKET_TIMES = "TICKET_TIMES";
+    protected static final String TICKET_NUMBER = "TICKET_NUMBER";
     protected static final String TICKET_LOCK = "TICKET_LOCK";
 
     @Autowired
@@ -29,10 +27,7 @@ public class TicketService {
         ticketLock.lock();
         try {
             RDeque<Ticket> tickets = tickets();
-            long newTicketNumber = 1;
-            if (!tickets.isEmpty()) {
-                newTicketNumber = tickets.peekLast().getNumber() + 1;
-            }
+            long newTicketNumber = ticketNumber().incrementAndGet();
             ticket = ticket(newTicketNumber);
             tickets.add(ticket);
         } finally {
@@ -60,6 +55,7 @@ public class TicketService {
         try {
             tickets().delete();
             ticketTimes().delete();
+            ticketNumber().set(0);
         } finally {
             ticketLock.unlock();
         }
@@ -102,6 +98,10 @@ public class TicketService {
             ticketLock.unlock();
         }
         return ticketStatus;
+    }
+
+    public Integer size() {
+        return tickets().size();
     }
 
     private long calculateEstimatedWaitTime(long numberBefore) {
@@ -159,6 +159,10 @@ public class TicketService {
 
     private RLock ticketLock() {
         return redissonClient.getLock(TICKET_LOCK);
+    }
+
+    private RAtomicLong ticketNumber() {
+        return redissonClient.getAtomicLong(TICKET_NUMBER);
     }
 
 }

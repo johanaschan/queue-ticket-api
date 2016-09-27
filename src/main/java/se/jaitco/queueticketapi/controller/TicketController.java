@@ -47,6 +47,11 @@ public class TicketController {
         return ticketService.ticketStatus(ticketNumber).orElseThrow(NotFoundException::new);
     }
 
+    @RequestMapping(value = "/size", method = {RequestMethod.GET})
+    public Integer size() {
+        return ticketService.size();
+    }
+
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     protected static class NotFoundException extends RuntimeException{
     }
