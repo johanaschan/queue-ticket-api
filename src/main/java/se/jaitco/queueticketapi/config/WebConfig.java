@@ -15,7 +15,7 @@ public class WebConfig {
     public FilterRegistrationBean jwtFilter() {
         final FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(new JwtFilter());
-        registrationBean.addUrlPatterns("/tickets/*");
+        registrationBean.addUrlPatterns("/tickets/remove/*");
 
         return registrationBean;
     }
