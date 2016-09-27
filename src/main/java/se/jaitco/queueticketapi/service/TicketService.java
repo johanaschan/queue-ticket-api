@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import se.jaitco.queueticketapi.model.Ticket;
 import se.jaitco.queueticketapi.model.TicketStatus;
 import se.jaitco.queueticketapi.model.TicketTime;
-
 import java.util.Optional;
 
 @Slf4j
