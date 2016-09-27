@@ -30,7 +30,6 @@ public class UserController {
                     .build();
         }
         throw new ServletException("Invalid login");
-
     }
 
 }

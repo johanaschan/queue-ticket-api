@@ -18,7 +18,7 @@ public class WebConfig {
         registrationBean.addUrlPatterns("/tickets/remove/*");
         return registrationBean;
     }
-    
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurerAdapter() {
