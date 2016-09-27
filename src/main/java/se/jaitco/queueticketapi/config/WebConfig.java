@@ -16,14 +16,12 @@ public class WebConfig {
         final FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(new JwtFilter());
         registrationBean.addUrlPatterns("/tickets/remove/*");
-
         return registrationBean;
     }
 
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-
         return new WebMvcConfigurerAdapter() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
@@ -31,6 +29,5 @@ public class WebConfig {
                         .allowedMethods("*");
             }
         };
-
     }
 }
