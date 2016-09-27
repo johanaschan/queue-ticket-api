@@ -2,10 +2,8 @@ package se.jaitco.queueticketapi.controller;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import se.jaitco.queueticketapi.model.LoginResponse;
 import se.jaitco.queueticketapi.model.UserLogin;
 
@@ -19,7 +17,7 @@ public class UserController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public LoginResponse login(@RequestBody UserLogin login) throws ServletException {
         if (login.getName() == null || login.getPassword() == null) {
-            throw new ServletException("Invalid login");
+            throw new BadRequestException();
         }
         if (login.getName().equals("aschan") && login.getPassword().equals("lmar")) {
             return LoginResponse.builder()
@@ -31,7 +29,11 @@ public class UserController {
                             .compact())
                     .build();
         }
-        throw new ServletException("Invalid login");
+        throw new BadRequestException();
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    protected static class BadRequestException extends RuntimeException {
     }
 
 }
