@@ -9,7 +9,9 @@ import lombok.Value;
 @Builder
 @JsonDeserialize(builder = UserLogin.UserLoginBuilder.class)
 public class UserLogin {
+
     String name;
+    
     String password;
 
     @JsonPOJOBuilder(withPrefix = "")
