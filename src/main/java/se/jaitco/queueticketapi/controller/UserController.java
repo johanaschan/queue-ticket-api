@@ -25,8 +25,10 @@ public class UserController {
             return LoginResponse.builder()
                     .token(Jwts.builder()
                             .setSubject(login.getName())
-                            .claim("roles", "tomte").setIssuedAt(new Date())
-                            .signWith(SignatureAlgorithm.HS256, "secretkey").compact())
+                            .claim("roles", "tomte")
+                            .setIssuedAt(new Date())
+                            .signWith(SignatureAlgorithm.HS256, "secretkey")
+                            .compact())
                     .build();
         }
         throw new ServletException("Invalid login");
