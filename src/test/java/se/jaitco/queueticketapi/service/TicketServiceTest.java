@@ -149,7 +149,7 @@ public class TicketServiceTest {
 
     }
 
-    private void verifyLock(){
+    private void verifyLock() {
         Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
         Mockito.verify(rLock, Mockito.times(1)).lock();
         Mockito.verify(rLock, Mockito.times(1)).unlock();
