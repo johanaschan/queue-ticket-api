@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class JwtFilter extends GenericFilterBean {
+public class AuthenticationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(final ServletRequest req,
@@ -42,5 +42,4 @@ public class JwtFilter extends GenericFilterBean {
 
         chain.doFilter(req, res);
     }
-
 }
