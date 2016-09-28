@@ -12,10 +12,11 @@ import se.jaitco.queueticketapi.filter.AuthenticationFilter;
 public class WebConfig {
 
     @Bean
-    public FilterRegistrationBean jwtFilter() {
+    public FilterRegistrationBean authenticationFilter() {
         final FilterRegistrationBean registrationBean = new FilterRegistrationBean();
         registrationBean.setFilter(new AuthenticationFilter());
-        registrationBean.addUrlPatterns("/tickets/*");
+        //registrationBean.addUrlPatterns("/tickets/*");
+        registrationBean.addUrlPatterns("/tickets/NOTUSED");
         return registrationBean;
     }
 

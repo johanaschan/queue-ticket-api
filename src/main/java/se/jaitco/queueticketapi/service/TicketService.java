@@ -3,7 +3,9 @@ package se.jaitco.queueticketapi.service;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+import se.jaitco.queueticketapi.model.Event;
 import se.jaitco.queueticketapi.model.Ticket;
 import se.jaitco.queueticketapi.model.TicketStatus;
 import se.jaitco.queueticketapi.model.TicketTime;
@@ -22,6 +24,9 @@ public class TicketService {
     @Autowired
     private RedissonClient redissonClient;
 
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
     public Ticket newTicket() {
         Ticket ticket;
         RLock ticketLock = ticketLock();
@@ -31,6 +36,7 @@ public class TicketService {
             long newTicketNumber = ticketNumber().incrementAndGet();
             ticket = ticket(newTicketNumber);
             tickets.add(ticket);
+            sendUpdate();
         } finally {
             ticketLock.unlock();
         }
@@ -45,6 +51,7 @@ public class TicketService {
             tickets.stream()
                     .filter(ticket -> ticket.getNumber() == ticketNumber)
                     .forEach(tickets::remove);
+            sendUpdate();
         } finally {
             ticketLock.unlock();
         }
@@ -57,6 +64,7 @@ public class TicketService {
             tickets().delete();
             ticketTimes().delete();
             ticketNumber().set(0);
+            sendUpdate();
         } finally {
             ticketLock.unlock();
         }
@@ -70,6 +78,7 @@ public class TicketService {
             if (ticket != null) {
                 ticketTimes().add(createTicketTimeFromTicket(ticket));
             }
+            sendUpdate();
         } finally {
             ticketLock.unlock();
         }
@@ -148,6 +157,10 @@ public class TicketService {
         ticketTime.setTimeStamp(timeStamp);
         ticketTime.setDuration(duration);
         return ticketTime;
+    }
+
+    private void sendUpdate() {
+        simpMessagingTemplate.convertAndSend("/topic/update", Event.builder().event("UPDATE").build());
     }
 
     private RDeque<TicketTime> ticketTimes() {
