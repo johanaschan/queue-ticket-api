@@ -47,6 +47,11 @@ public class TicketController {
         return ticketService.ticketStatus(ticketNumber).orElseThrow(NotFoundException::new);
     }
 
+    @RequestMapping(value = "/NOTUSED", method = {RequestMethod.GET})
+    public String notUsed() {
+        return "SUCCESS";
+    }
+
     @RequestMapping(value = "/size", method = {RequestMethod.GET})
     public Integer size() {
         return ticketService.size();
