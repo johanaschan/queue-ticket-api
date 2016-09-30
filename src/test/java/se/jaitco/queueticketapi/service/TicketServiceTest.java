@@ -88,8 +88,10 @@ public class TicketServiceTest {
         Assert.assertThat(ticket.getNumber(), is(2L));
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKET_NUMBER);
+        Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKETS_VERSION);
         Mockito.verify(tickets, Mockito.times(1)).add(Matchers.any(Ticket.class));
         Mockito.verify(ticketNumber, Mockito.times(1)).incrementAndGet();
+        Mockito.verify(ticketVersion, Mockito.times(1)).get();
     }
 
     @Test

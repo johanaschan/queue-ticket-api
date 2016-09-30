@@ -32,7 +32,7 @@ public class TicketService {
         try {
             RDeque<Ticket> tickets = tickets();
             long newTicketNumber = ticketNumber().incrementAndGet();
-            ticket = ticket(newTicketNumber);
+            ticket = ticket(newTicketNumber, version());
             tickets.add(ticket);
             sendWebsocketEvent(Event.UPDATE);
         } finally {
@@ -63,7 +63,7 @@ public class TicketService {
             ticketTimes().delete();
             ticketNumber().set(0);
             ticketsVersion().incrementAndGet();
-            sendWebsocketEvent(Event.UPDATE);
+            sendWebsocketEvent(Event.RESET);
         } finally {
             ticketLock.unlock();
         }
@@ -140,10 +140,11 @@ public class TicketService {
                 .count();
     }
 
-    private Ticket ticket(long number) {
+    private Ticket ticket(long number, long version) {
         Ticket ticket = new Ticket();
         ticket.setNumber(number);
         ticket.setTime(System.nanoTime());
+        ticket.setVersion(version);
         return ticket;
     }
 
