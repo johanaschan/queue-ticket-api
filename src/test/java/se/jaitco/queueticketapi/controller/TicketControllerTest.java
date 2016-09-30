@@ -89,4 +89,11 @@ public class TicketControllerTest {
         Mockito.verify(ticketService, Mockito.times(1)).size();
     }
 
+    @Test
+    public void testVersion() {
+        classUnderTest.version();
+
+        Mockito.verify(ticketService, Mockito.times(1)).version();
+    }
+
 }
