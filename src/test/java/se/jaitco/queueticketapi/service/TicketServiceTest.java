@@ -86,7 +86,7 @@ public class TicketServiceTest {
         Ticket ticket = classUnderTest.newTicket();
 
         verifyLock();
-        verifyWebsocketCall();
+        verifyWebSocketCall();
         Assert.assertThat(ticket.getNumber(), is(2L));
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKET_NUMBER);
@@ -101,7 +101,7 @@ public class TicketServiceTest {
         classUnderTest.resetTickets();
 
         verifyLock();
-        verifyWebsocketCall();
+        verifyWebSocketCall();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKET_TIMES);
         Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKET_NUMBER);
@@ -117,7 +117,7 @@ public class TicketServiceTest {
         classUnderTest.nextTicket();
 
         verifyLock();
-        verifyWebsocketCall();
+        verifyWebSocketCall();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKET_TIMES);
         Mockito.verify(ticketTimes, Mockito.times(1)).add(Matchers.any(TicketTime.class));
@@ -156,7 +156,7 @@ public class TicketServiceTest {
         classUnderTest.dropTicket(ticketNumber);
 
         verifyLock();
-        verifyWebsocketCall();
+        verifyWebSocketCall();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(tickets, Mockito.times(1)).stream();
         Mockito.verify(tickets, Mockito.times(1)).remove(Matchers.any(Ticket.class));
@@ -184,7 +184,7 @@ public class TicketServiceTest {
         Mockito.verify(rLock, Mockito.times(1)).unlock();
     }
 
-    private void verifyWebsocketCall() {
+    private void verifyWebSocketCall() {
         Mockito.verify(simpMessagingTemplate, Mockito.times(1))
                 .convertAndSend(Matchers.anyString(), Matchers.any(Event.class));
     }
