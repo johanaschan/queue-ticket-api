@@ -15,6 +15,12 @@ import java.io.IOException;
 
 public class AuthenticationFilter extends GenericFilterBean {
 
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BEARER_WITH_SPACE = "Bearer ";
+    private static final int BEARER_WITH_SPACE_LENGTH = BEARER_WITH_SPACE.length();
+
+
+
     @Override
     public void doFilter(final ServletRequest req,
                          final ServletResponse res,
@@ -22,24 +28,44 @@ public class AuthenticationFilter extends GenericFilterBean {
         final HttpServletRequest request = (HttpServletRequest) req;
         final HttpServletResponse response = (HttpServletResponse) res;
 
-        final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header.");
-            return;
-        }
+        if(isPreflight(request)) {
+            chain.doFilter(req, res);
+        }else{
+            final String authHeader = getAuthHeader(request);
+            if(!isHeaderValid(authHeader)){
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header.");
+                return;
+            }
+            final String token = getToken(authHeader);
+            try {
+                final Claims claims = verifySignatureAndGetClaims(token);
+                request.setAttribute("claims", claims);
+            }catch (SignatureException e){
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token.");
+            }
+       }
+    }
 
-        final String token = authHeader.substring(7); // The part after "Bearer "
+    private Claims verifySignatureAndGetClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey("secretkey2")
+                .parseClaimsJws(token)
+                .getBody();
+    }
 
-        try {
-            final Claims claims = Jwts.parser()
-                    .setSigningKey("secretkey")
-                    .parseClaimsJws(token)
-                    .getBody();
-            request.setAttribute("claims", claims);
-        } catch (SignatureException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token.");
-        }
+    private String getToken(String authHeader) {
+        return authHeader.substring(BEARER_WITH_SPACE_LENGTH);
+    }
 
-        chain.doFilter(req, res);
+    private boolean isHeaderValid(String authHeader) {
+        return authHeader == null || !authHeader.startsWith("BEARER_WITH_SPACE");
+    }
+
+    private String getAuthHeader(HttpServletRequest request) {
+        return request.getHeader(AUTHORIZATION);
+    }
+
+    private boolean isPreflight(HttpServletRequest request) {
+        return "OPTIONS".equals(request.getMethod());
     }
 }
