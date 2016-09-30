@@ -4,7 +4,7 @@
 [![Dependency Status](https://www.versioneye.com/user/projects/57d7afabbf2b4b0050f30acc/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57d7afabbf2b4b0050f30acc)
 
 # QueueTicketApi
-REST-API for QueueTicket built with Spring Boot, using Redis as a database and deployed at [Heroku](https://queue-ticket-api.herokuapp.com).
+API for QueueTicket built with Spring Boot using REST and Websocket, using Redis as a database and deployed at [Heroku](https://queue-ticket-api.herokuapp.com).
 
 ### Swagger ###
 Swagger is exposed at /v2/api-docs
