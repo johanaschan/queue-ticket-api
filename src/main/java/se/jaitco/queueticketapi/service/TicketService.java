@@ -170,7 +170,7 @@ public class TicketService {
     }
 
     private void sendWebsocketEvent(Event event) {
-        simpMessagingTemplate.convertAndSend("/topic/event", WebsocketEvent.builder().event(event).build());
+        simpMessagingTemplate.convertAndSend("/topic/event", WebSocketEvent.builder().event(event).build());
     }
 
     private RDeque<TicketTime> ticketTimes() {
