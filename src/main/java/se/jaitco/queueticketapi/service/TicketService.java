@@ -73,11 +73,14 @@ public class TicketService {
         RLock ticketLock = ticketLock();
         ticketLock.lock();
         try {
-            Ticket ticket = tickets().poll();
-            if (ticket != null) {
-                ticketTimes().add(createTicketTimeFromTicket(ticket));
+            RDeque<Ticket> tickets = tickets();
+            if (tickets.size() > 1) {
+                Ticket ticket = tickets.poll();
+                if (ticket != null) {
+                    ticketTimes().add(createTicketTimeFromTicket(ticket));
+                }
+                sendWebsocketEvent(Event.UPDATE);
             }
-            sendWebsocketEvent(Event.UPDATE);
         } finally {
             ticketLock.unlock();
         }
@@ -93,15 +96,18 @@ public class TicketService {
         RLock ticketLock = ticketLock();
         ticketLock.lock();
         try {
-            long numbersBefore = calculateNumbersBefore(tickets(), ticketNumber);
-            if (numbersBefore > 0) {
-                long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
-                ticketStatus = Optional.of(TicketStatus.builder()
-                        .numbersBefore(numbersBefore)
-                        .estimatedWaitTime(estimatedWaitTime)
-                        .build());
-            } else {
-                ticketStatus = Optional.empty();
+            RDeque<Ticket> tickets = tickets();
+            if (tickets.size() > 1) {
+                long numbersBefore = calculateNumbersBefore(tickets, ticketNumber);
+                if (numbersBefore > 0) {
+                    long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
+                    ticketStatus = Optional.of(TicketStatus.builder()
+                            .numbersBefore(numbersBefore)
+                            .estimatedWaitTime(estimatedWaitTime)
+                            .build());
+                } else {
+                    ticketStatus = Optional.empty();
+                }
             }
         } finally {
             ticketLock.unlock();

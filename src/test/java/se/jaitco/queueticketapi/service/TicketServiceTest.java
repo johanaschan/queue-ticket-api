@@ -69,6 +69,8 @@ public class TicketServiceTest {
                 .thenReturn(ticket());
         Mockito.when(tickets.stream())
                 .thenReturn(Stream.of(tickets().toArray()));
+        Mockito.when(tickets.size())
+                .thenReturn(2);
         Mockito.when(ticketTimes.stream())
                 .thenReturn(Stream.of(ticketTime()));
         Mockito.when(ticketTimes.size())
