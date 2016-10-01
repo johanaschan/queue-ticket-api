@@ -2,10 +2,13 @@ package se.jaitco.queueticketapi.controller;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import se.jaitco.queueticketapi.model.LoginResponse;
 import se.jaitco.queueticketapi.model.UserLogin;
+import se.jaitco.queueticketapi.service.TicketService;
+import se.jaitco.queueticketapi.service.UserService;
 
 import javax.servlet.ServletException;
 import java.util.Date;
@@ -14,22 +17,12 @@ import java.util.Date;
 @RequestMapping("/user")
 public class UserController {
 
+    @Autowired
+    private UserService userService;
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public LoginResponse login(@RequestBody UserLogin login) throws ServletException {
-        if (login.getName() == null || login.getPassword() == null) {
-            throw new BadRequestException();
-        }
-        if (login.getName().equals("aschan") && login.getPassword().equals("lmar")) {
-            return LoginResponse.builder()
-                    .token(Jwts.builder()
-                            .setSubject(login.getName())
-                            .claim("roles", "tomte")
-                            .setIssuedAt(new Date())
-                            .signWith(SignatureAlgorithm.HS256, "secretkey")
-                            .compact())
-                    .build();
-        }
-        throw new BadRequestException();
+        return userService.login(login).orElseThrow(BadRequestException::new);
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

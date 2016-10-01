@@ -17,6 +17,7 @@ public class AuthenticationFilter extends GenericFilterBean {
 
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER_WITH_SPACE = "Bearer ";
+    private static final String OPTIONS = "OPTIONS";
     private static final int BEARER_WITH_SPACE_LENGTH = BEARER_WITH_SPACE.length();
 
 
@@ -48,7 +49,7 @@ public class AuthenticationFilter extends GenericFilterBean {
 
     private Claims verifySignatureAndGetClaims(String token) {
         return Jwts.parser()
-                .setSigningKey("secretkey2")
+                .setSigningKey("secretkey")
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -58,7 +59,7 @@ public class AuthenticationFilter extends GenericFilterBean {
     }
 
     private boolean isHeaderValid(String authHeader) {
-        return authHeader == null || !authHeader.startsWith("BEARER_WITH_SPACE");
+        return authHeader == null || !authHeader.startsWith(BEARER_WITH_SPACE);
     }
 
     private String getAuthHeader(HttpServletRequest request) {
