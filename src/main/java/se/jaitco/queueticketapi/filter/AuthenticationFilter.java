@@ -3,6 +3,7 @@ package se.jaitco.queueticketapi.filter;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -17,7 +18,6 @@ public class AuthenticationFilter extends GenericFilterBean {
 
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER_WITH_SPACE = "Bearer ";
-    private static final String OPTIONS = "OPTIONS";
     private static final int BEARER_WITH_SPACE_LENGTH = BEARER_WITH_SPACE.length();
 
 
@@ -67,6 +67,6 @@ public class AuthenticationFilter extends GenericFilterBean {
     }
 
     private boolean isPreflight(HttpServletRequest request) {
-        return "OPTIONS".equals(request.getMethod());
+        return RequestMethod.OPTIONS.name().equals(request.getMethod());
     }
 }
