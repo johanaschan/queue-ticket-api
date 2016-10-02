@@ -7,12 +7,12 @@ import lombok.Value;
 
 @Value
 @Builder
-@JsonDeserialize(builder = WebSocketEvent.WebsocketEventBuilder.class)
+@JsonDeserialize(builder = WebSocketEvent.WebSocketEventBuilder.class)
 public class WebSocketEvent {
 
     Event event;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static final class WebsocketEventBuilder {
+    public static final class WebSocketEventBuilder {
     }
 }
