@@ -43,7 +43,6 @@ public class AuthenticationFilter extends GenericFilterBean {
                 }
             } else {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header.");
-                return;
             }
         }
     }
