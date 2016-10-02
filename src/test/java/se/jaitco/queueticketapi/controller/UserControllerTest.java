@@ -36,6 +36,7 @@ public class UserControllerTest {
     public void testLoginFailure() throws ServletException {
         UserLogin userLogin = UserLogin.builder().build();
         Mockito.when(userService.login(userLogin)).thenReturn(Optional.empty());
+        classUnderTest.login(userLogin);
     }
 
 }
