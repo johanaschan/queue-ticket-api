@@ -21,7 +21,6 @@ public class AuthenticationFilter extends GenericFilterBean {
     private static final int BEARER_WITH_SPACE_LENGTH = BEARER_WITH_SPACE.length();
 
 
-
     @Override
     public void doFilter(final ServletRequest req,
                          final ServletResponse res,
@@ -29,24 +28,24 @@ public class AuthenticationFilter extends GenericFilterBean {
         final HttpServletRequest request = (HttpServletRequest) req;
         final HttpServletResponse response = (HttpServletResponse) res;
 
-        if(isPreflight(request)) {
+        if (isPreflight(request)) {
             chain.doFilter(req, res);
-        }else{
+        } else {
             final String authHeader = getAuthHeader(request);
-            if(isHeaderValid(authHeader)){
+            if (isHeaderValid(authHeader)) {
                 final String token = getToken(authHeader);
                 try {
                     final Claims claims = verifySignatureAndGetClaims(token);
                     request.setAttribute("claims", claims);
                     chain.doFilter(req, res);
-                }catch (SignatureException e){
+                } catch (SignatureException e) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token.");
                 }
-            }else{
+            } else {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header.");
                 return;
             }
-       }
+        }
     }
 
     private Claims verifySignatureAndGetClaims(String token) {

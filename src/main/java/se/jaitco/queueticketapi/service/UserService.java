@@ -14,17 +14,17 @@ import java.util.Optional;
 @Component
 public class UserService {
 
-    public Optional<LoginResponse> login(UserLogin login){
-            if ("Aschan".equals(login.getName()) && "Lmar".equals(login.getPassword())) {
-                return Optional.of(LoginResponse.builder()
-                        .token(Jwts.builder()
-                                .setSubject(login.getName())
-                                .claim("roles", "tomte")
-                                .setIssuedAt(new Date())
-                                .signWith(SignatureAlgorithm.HS256, "secretkey")
-                                .compact())
-                        .build());
-            }
+    public Optional<LoginResponse> login(UserLogin login) {
+        if ("Aschan".equals(login.getName()) && "Lmar".equals(login.getPassword())) {
+            return Optional.of(LoginResponse.builder()
+                    .token(Jwts.builder()
+                            .setSubject(login.getName())
+                            .claim("roles", "tomte")
+                            .setIssuedAt(new Date())
+                            .signWith(SignatureAlgorithm.HS256, "secretkey")
+                            .compact())
+                    .build());
+        }
         return Optional.empty();
     }
 }
