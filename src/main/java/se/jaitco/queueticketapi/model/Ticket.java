@@ -9,4 +9,6 @@ public class Ticket {
 
     private long number;
 
+    private long version;
+
 }

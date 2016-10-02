@@ -9,6 +9,7 @@ import org.redisson.api.RDeque;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import se.jaitco.queueticketapi.model.Event;
 import se.jaitco.queueticketapi.model.Ticket;
 import se.jaitco.queueticketapi.model.TicketStatus;
 import se.jaitco.queueticketapi.model.TicketTime;
@@ -42,6 +43,9 @@ public class TicketServiceTest {
     private RAtomicLong ticketNumber;
 
     @Mock
+    private RAtomicLong ticketVersion;
+
+    @Mock
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @Before
@@ -55,6 +59,8 @@ public class TicketServiceTest {
                 .thenReturn(ticketTimes);
         Mockito.when(redissonClient.getAtomicLong(TICKET_NUMBER))
                 .thenReturn(ticketNumber);
+        Mockito.when(redissonClient.getAtomicLong(TICKETS_VERSION))
+                .thenReturn(ticketVersion);
         Mockito.when(tickets.poll())
                 .thenReturn(ticket());
         Mockito.when(tickets.peek())
@@ -63,12 +69,16 @@ public class TicketServiceTest {
                 .thenReturn(ticket());
         Mockito.when(tickets.stream())
                 .thenReturn(Stream.of(tickets().toArray()));
+        Mockito.when(tickets.size())
+                .thenReturn(2);
         Mockito.when(ticketTimes.stream())
                 .thenReturn(Stream.of(ticketTime()));
         Mockito.when(ticketTimes.size())
                 .thenReturn(1);
         Mockito.when(ticketNumber.incrementAndGet())
                 .thenReturn(2L);
+        Mockito.when(ticketVersion.incrementAndGet())
+                .thenReturn(3L);
     }
 
     @Test
@@ -76,12 +86,14 @@ public class TicketServiceTest {
         Ticket ticket = classUnderTest.newTicket();
 
         verifyLock();
-        verifyWebsocketCall();
+        verifyWebSocketCall();
         Assert.assertThat(ticket.getNumber(), is(2L));
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKET_NUMBER);
+        Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKETS_VERSION);
         Mockito.verify(tickets, Mockito.times(1)).add(Matchers.any(Ticket.class));
         Mockito.verify(ticketNumber, Mockito.times(1)).incrementAndGet();
+        Mockito.verify(ticketVersion, Mockito.times(1)).get();
     }
 
     @Test
@@ -89,13 +101,15 @@ public class TicketServiceTest {
         classUnderTest.resetTickets();
 
         verifyLock();
-        verifyWebsocketCall();
+        verifyWebSocketCall();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKET_TIMES);
         Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKET_NUMBER);
+        Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKETS_VERSION);
         Mockito.verify(tickets, Mockito.times(1)).delete();
         Mockito.verify(ticketTimes, Mockito.times(1)).delete();
         Mockito.verify(ticketNumber, Mockito.times(1)).set(0L);
+        Mockito.verify(ticketVersion, Mockito.times(1)).incrementAndGet();
     }
 
     @Test
@@ -103,7 +117,7 @@ public class TicketServiceTest {
         classUnderTest.nextTicket();
 
         verifyLock();
-        verifyWebsocketCall();
+        verifyWebSocketCall();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKET_TIMES);
         Mockito.verify(ticketTimes, Mockito.times(1)).add(Matchers.any(TicketTime.class));
@@ -142,7 +156,7 @@ public class TicketServiceTest {
         classUnderTest.dropTicket(ticketNumber);
 
         verifyLock();
-        verifyWebsocketCall();
+        verifyWebSocketCall();
         Mockito.verify(redissonClient, Mockito.times(1)).getDeque(TICKETS);
         Mockito.verify(tickets, Mockito.times(1)).stream();
         Mockito.verify(tickets, Mockito.times(1)).remove(Matchers.any(Ticket.class));
@@ -157,15 +171,22 @@ public class TicketServiceTest {
 
     }
 
+    @Test
+    public void testVersion() {
+        classUnderTest.version();
+
+        Mockito.verify(redissonClient, Mockito.times(1)).getAtomicLong(TICKETS_VERSION);
+    }
+
     private void verifyLock() {
         Mockito.verify(redissonClient, Mockito.times(1)).getLock(TICKET_LOCK);
         Mockito.verify(rLock, Mockito.times(1)).lock();
         Mockito.verify(rLock, Mockito.times(1)).unlock();
     }
 
-    private void verifyWebsocketCall() {
+    private void verifyWebSocketCall() {
         Mockito.verify(simpMessagingTemplate, Mockito.times(1))
-                .convertAndSend(Matchers.anyString(), Matchers.any(Object.class));
+                .convertAndSend(Matchers.anyString(), Matchers.any(Event.class));
     }
 
     private List<Ticket> tickets() {

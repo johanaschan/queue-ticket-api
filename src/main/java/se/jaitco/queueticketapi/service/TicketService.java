@@ -5,10 +5,7 @@ import org.redisson.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
-import se.jaitco.queueticketapi.model.Event;
-import se.jaitco.queueticketapi.model.Ticket;
-import se.jaitco.queueticketapi.model.TicketStatus;
-import se.jaitco.queueticketapi.model.TicketTime;
+import se.jaitco.queueticketapi.model.*;
 
 import java.util.Optional;
 
@@ -16,6 +13,7 @@ import java.util.Optional;
 @Component
 public class TicketService {
 
+    protected static final String TICKETS_VERSION = "TICKETS_VERSION";
     protected static final String TICKETS = "TICKETS";
     protected static final String TICKET_TIMES = "TICKET_TIMES";
     protected static final String TICKET_NUMBER = "TICKET_NUMBER";
@@ -34,9 +32,9 @@ public class TicketService {
         try {
             RDeque<Ticket> tickets = tickets();
             long newTicketNumber = ticketNumber().incrementAndGet();
-            ticket = ticket(newTicketNumber);
+            ticket = ticket(newTicketNumber, version());
             tickets.add(ticket);
-            sendUpdate();
+            sendWebsocketEvent(Event.UPDATE);
         } finally {
             ticketLock.unlock();
         }
@@ -51,7 +49,7 @@ public class TicketService {
             tickets.stream()
                     .filter(ticket -> ticket.getNumber() == ticketNumber)
                     .forEach(tickets::remove);
-            sendUpdate();
+            sendWebsocketEvent(Event.UPDATE);
         } finally {
             ticketLock.unlock();
         }
@@ -64,7 +62,8 @@ public class TicketService {
             tickets().delete();
             ticketTimes().delete();
             ticketNumber().set(0);
-            sendUpdate();
+            ticketsVersion().incrementAndGet();
+            sendWebsocketEvent(Event.RESET);
         } finally {
             ticketLock.unlock();
         }
@@ -74,11 +73,14 @@ public class TicketService {
         RLock ticketLock = ticketLock();
         ticketLock.lock();
         try {
-            Ticket ticket = tickets().poll();
-            if (ticket != null) {
-                ticketTimes().add(createTicketTimeFromTicket(ticket));
+            RDeque<Ticket> tickets = tickets();
+            if (tickets.size() > 1) {
+                Ticket ticket = tickets.poll();
+                if (ticket != null) {
+                    ticketTimes().add(createTicketTimeFromTicket(ticket));
+                }
+                sendWebsocketEvent(Event.UPDATE);
             }
-            sendUpdate();
         } finally {
             ticketLock.unlock();
         }
@@ -94,15 +96,18 @@ public class TicketService {
         RLock ticketLock = ticketLock();
         ticketLock.lock();
         try {
-            long numbersBefore = calculateNumbersBefore(tickets(), ticketNumber);
-            if (numbersBefore > 0) {
-                long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
-                ticketStatus = Optional.of(TicketStatus.builder()
-                        .numbersBefore(numbersBefore)
-                        .estimatedWaitTime(estimatedWaitTime)
-                        .build());
-            } else {
-                ticketStatus = Optional.empty();
+            RDeque<Ticket> tickets = tickets();
+            if (tickets.size() > 1) {
+                long numbersBefore = calculateNumbersBefore(tickets, ticketNumber);
+                if (numbersBefore > 0) {
+                    long estimatedWaitTime = calculateEstimatedWaitTime(numbersBefore);
+                    ticketStatus = Optional.of(TicketStatus.builder()
+                            .numbersBefore(numbersBefore)
+                            .estimatedWaitTime(estimatedWaitTime)
+                            .build());
+                } else {
+                    ticketStatus = Optional.empty();
+                }
             }
         } finally {
             ticketLock.unlock();
@@ -112,6 +117,10 @@ public class TicketService {
 
     public Integer size() {
         return tickets().size();
+    }
+
+    public Long version() {
+        return ticketsVersion().get();
     }
 
     private long calculateEstimatedWaitTime(long numberBefore) {
@@ -137,10 +146,11 @@ public class TicketService {
                 .count();
     }
 
-    private Ticket ticket(long number) {
+    private Ticket ticket(long number, long version) {
         Ticket ticket = new Ticket();
         ticket.setNumber(number);
         ticket.setTime(System.nanoTime());
+        ticket.setVersion(version);
         return ticket;
     }
 
@@ -159,8 +169,8 @@ public class TicketService {
         return ticketTime;
     }
 
-    private void sendUpdate() {
-        simpMessagingTemplate.convertAndSend("/topic/update", Event.builder().event("UPDATE").build());
+    private void sendWebsocketEvent(Event event) {
+        simpMessagingTemplate.convertAndSend("/topic/event", WebSocketEvent.builder().event(event).build());
     }
 
     private RDeque<TicketTime> ticketTimes() {
@@ -177,6 +187,10 @@ public class TicketService {
 
     private RAtomicLong ticketNumber() {
         return redissonClient.getAtomicLong(TICKET_NUMBER);
+    }
+
+    private RAtomicLong ticketsVersion() {
+        return redissonClient.getAtomicLong(TICKETS_VERSION);
     }
 
 }

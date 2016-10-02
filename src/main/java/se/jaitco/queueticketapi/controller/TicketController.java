@@ -39,17 +39,12 @@ public class TicketController {
 
     @RequestMapping(value = "/current", method = {RequestMethod.GET})
     public Ticket currentTicket() {
-        return ticketService.currentTicket().orElseThrow(NotFoundException::new);
+        return ticketService.currentTicket().orElse(null);
     }
 
     @RequestMapping(value = "/ticketstatus/{ticketNumber}", method = {RequestMethod.GET})
     public TicketStatus ticketStatus(@PathVariable("ticketNumber") long ticketNumber) {
-        return ticketService.ticketStatus(ticketNumber).orElseThrow(NotFoundException::new);
-    }
-
-    @RequestMapping(value = "/NOTUSED", method = {RequestMethod.GET})
-    public String notUsed() {
-        return "SUCCESS";
+        return ticketService.ticketStatus(ticketNumber).orElse(null);
     }
 
     @RequestMapping(value = "/size", method = {RequestMethod.GET})
@@ -57,8 +52,15 @@ public class TicketController {
         return ticketService.size();
     }
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    protected static class NotFoundException extends RuntimeException {
+    @RequestMapping(value = "/version", method = {RequestMethod.GET})
+    public Long version() {
+        return ticketService.version();
     }
+
+    @RequestMapping(value = "/NOTUSED", method = {RequestMethod.GET})
+    public String notUsed() {
+        return "SUCCESS";
+    }
+
 }
 
