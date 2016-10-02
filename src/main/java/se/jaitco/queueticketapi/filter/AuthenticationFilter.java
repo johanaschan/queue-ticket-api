@@ -33,16 +33,18 @@ public class AuthenticationFilter extends GenericFilterBean {
             chain.doFilter(req, res);
         }else{
             final String authHeader = getAuthHeader(request);
-            if(!isHeaderValid(authHeader)){
+            if(isHeaderValid(authHeader)){
+                final String token = getToken(authHeader);
+                try {
+                    final Claims claims = verifySignatureAndGetClaims(token);
+                    request.setAttribute("claims", claims);
+                    chain.doFilter(req, res);
+                }catch (SignatureException e){
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token.");
+                }
+            }else{
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header.");
                 return;
-            }
-            final String token = getToken(authHeader);
-            try {
-                final Claims claims = verifySignatureAndGetClaims(token);
-                request.setAttribute("claims", claims);
-            }catch (SignatureException e){
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token.");
             }
        }
     }
@@ -59,7 +61,7 @@ public class AuthenticationFilter extends GenericFilterBean {
     }
 
     private boolean isHeaderValid(String authHeader) {
-        return authHeader == null || !authHeader.startsWith(BEARER_WITH_SPACE);
+        return authHeader != null && authHeader.startsWith(BEARER_WITH_SPACE);
     }
 
     private String getAuthHeader(HttpServletRequest request) {
