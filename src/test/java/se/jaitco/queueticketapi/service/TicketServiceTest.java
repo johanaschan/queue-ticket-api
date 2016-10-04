@@ -218,7 +218,6 @@ public class TicketServiceTest {
     private TicketTime ticketTime() {
         TicketTime ticketTime = new TicketTime();
         ticketTime.setDuration(1);
-        ticketTime.setTimeStamp(System.nanoTime());
         return ticketTime;
     }
 

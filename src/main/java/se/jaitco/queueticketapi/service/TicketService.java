@@ -132,7 +132,6 @@ public class TicketService {
         long totalDuration = ticketTimes.stream()
                 .mapToLong(TicketTime::getDuration)
                 .sum();
-
         long meanTime = 0;
         if (!ticketTimes.isEmpty()) {
             meanTime = totalDuration / ticketTimes.size();
@@ -155,16 +154,11 @@ public class TicketService {
     }
 
     private TicketTime createTicketTimeFromTicket(Ticket ticket) {
-        return createTicketTime(ticket.getTime(), System.nanoTime());
+        return ticketTime(System.nanoTime() - ticket.getTime());
     }
 
-    private TicketTime createTicketTime(long startTime, long endTime) {
-        return ticketTime(endTime, endTime - startTime);
-    }
-
-    private TicketTime ticketTime(long timeStamp, long duration) {
+    private TicketTime ticketTime(long duration) {
         TicketTime ticketTime = new TicketTime();
-        ticketTime.setTimeStamp(timeStamp);
         ticketTime.setDuration(duration);
         return ticketTime;
     }
