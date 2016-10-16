@@ -34,7 +34,7 @@ public class TicketService {
             long newTicketNumber = ticketNumber().incrementAndGet();
             ticket = ticket(newTicketNumber, version());
             tickets.add(ticket);
-            sendWebsocketEvent(Event.UPDATE);
+            registerEvent(Event.UPDATE);
         } finally {
                             ticketLock.unlock();
         }
@@ -49,7 +49,7 @@ public class TicketService {
             tickets.stream()
                     .filter(ticket -> ticket.getNumber() == ticketNumber)
                     .forEach(tickets::remove);
-            sendWebsocketEvent(Event.UPDATE);
+            registerEvent(Event.UPDATE);
         } finally {
             ticketLock.unlock();
         }
@@ -63,7 +63,7 @@ public class TicketService {
             ticketTimes().delete();
             ticketNumber().set(0);
             ticketsVersion().incrementAndGet();
-            sendWebsocketEvent(Event.RESET);
+            registerEvent(Event.RESET);
         } finally {
             ticketLock.unlock();
         }
@@ -79,7 +79,7 @@ public class TicketService {
                 if (ticket != null) {
                     ticketTimes().add(createTicketTimeFromTicket(ticket));
                 }
-                sendWebsocketEvent(Event.UPDATE);
+                registerEvent(Event.UPDATE);
             }
         } finally {
             ticketLock.unlock();
@@ -163,7 +163,7 @@ public class TicketService {
         return ticketTime;
     }
 
-    private void sendWebsocketEvent(Event event) {
+    private void registerEvent(Event event) {
         simpMessagingTemplate.convertAndSend("/topic/event", WebSocketEvent.builder().event(event).build());
     }
 
