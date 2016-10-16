@@ -1,30 +1,29 @@
 package se.jaitco.queueticketapi.service;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import se.jaitco.queueticketapi.model.LoginResponse;
-import se.jaitco.queueticketapi.model.UserLogin;
+import se.jaitco.queueticketapi.model.Roles;
+import se.jaitco.queueticketapi.model.User;
 
-import java.util.Date;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Slf4j
 @Component
 public class UserService {
 
-    public Optional<LoginResponse> login(UserLogin login) {
-        if ("Aschan".equals(login.getName()) && "Lmar".equals(login.getPassword())) {
-            return Optional.of(LoginResponse.builder()
-                    .token(Jwts.builder()
-                            .setSubject(login.getName())
-                            .claim("roles", "tomte")
-                            .setIssuedAt(new Date())
-                            .signWith(SignatureAlgorithm.HS256, "secretkey")
-                            .compact())
-                    .build());
+    public Optional<User> getUser(String username) {
+        Optional<User> user;
+        if("Aschan".equals(username)){
+            User aschan = User.builder().username("Aschan").password("Fotboll").grantedRoles(Arrays.asList(Roles.CUSTOMER)).build();
+            user = Optional.of(aschan);
+        }else if("Lmar".equals(username)){
+            User lmar = User.builder().username("Lmar").password("Book").grantedRoles(Arrays.asList(Roles.SELLER)).build();
+            user = Optional.of(lmar);
+        }else{
+            user = Optional.empty();
         }
-        return Optional.empty();
+        return user;
     }
+
 }

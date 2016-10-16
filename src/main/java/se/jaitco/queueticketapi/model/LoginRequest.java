@@ -7,8 +7,8 @@ import lombok.Value;
 
 @Value
 @Builder
-@JsonDeserialize(builder = UserLogin.UserLoginBuilder.class)
-public class UserLogin {
+@JsonDeserialize(builder = LoginRequest.UserLoginBuilder.class)
+public class LoginRequest {
 
     String name;
     

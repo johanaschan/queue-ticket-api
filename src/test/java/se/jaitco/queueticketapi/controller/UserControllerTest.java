@@ -7,11 +7,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import se.jaitco.queueticketapi.model.LoginResponse;
-import se.jaitco.queueticketapi.model.UserLogin;
-import se.jaitco.queueticketapi.service.UserService;
-
-import javax.servlet.ServletException;
-import java.util.Optional;
+import se.jaitco.queueticketapi.model.LoginRequest;
+import se.jaitco.queueticketapi.service.AuthenticationService;
 
 public class UserControllerTest {
 
@@ -19,7 +16,7 @@ public class UserControllerTest {
     private final UserController classUnderTest = new UserController();
 
     @Mock
-    private UserService userService;
+    private AuthenticationService authenticationService;
 
     @Before
     public void setup() {
@@ -27,20 +24,12 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testLoginCorrect() throws ServletException {
-        UserLogin userLogin = UserLogin.builder().build();
-        Mockito.when(userService.login(userLogin)).thenReturn(Optional.of(LoginResponse.builder().build()));
+    public void testLoginCorrect(){
+        LoginRequest userLogin = LoginRequest.builder().build();
+        Mockito.when(authenticationService.login(userLogin)).thenReturn(LoginResponse.builder().build());
         LoginResponse loginResponse = classUnderTest.login(userLogin);
 
-        Mockito.verify(userService, Mockito.times(1)).login(userLogin);
-    }
-
-    @Test(expected = UserController.BadRequestException.class)
-    public void testLoginFailure() throws ServletException {
-        UserLogin userLogin = UserLogin.builder().build();
-
-        Mockito.when(userService.login(userLogin)).thenReturn(Optional.empty());
-        classUnderTest.login(userLogin);
+        Mockito.verify(authenticationService, Mockito.times(1)).login(userLogin);
     }
 
 }

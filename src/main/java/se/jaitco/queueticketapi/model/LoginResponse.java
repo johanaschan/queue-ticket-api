@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
-@JsonDeserialize(builder = UserLogin.UserLoginBuilder.class)
+@JsonDeserialize(builder = LoginRequest.UserLoginBuilder.class)
 public class LoginResponse {
 
     String token;
