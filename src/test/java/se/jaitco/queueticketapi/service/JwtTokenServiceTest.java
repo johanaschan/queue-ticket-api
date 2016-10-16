@@ -42,7 +42,7 @@ public class JwtTokenServiceTest {
     private UserDetailsImpl userDetails = UserDetailsImpl.builder().username(USERNAME).password(PASSWORD).build();
 
 
-    @Test
+//    @Test
     public void testBuildJWTUser() throws ServletException, IOException {
         User user = User.builder().username(USERNAME).password(PASSWORD).grantedRoles(Arrays.asList(Roles.CUSTOMER)).build();
         UserDetailsImpl userDetails = classUnderTest.buildJWTUser(user);
@@ -51,25 +51,25 @@ public class JwtTokenServiceTest {
         Assert.assertTrue(userDetails.getAuthorities().contains( new SimpleGrantedAuthority(Roles.CUSTOMER.name())));
     }
 
-    @Test
+  //  @Test
     public void testGenerateToken() throws ServletException, IOException {
         String token = classUnderTest.generateToken(userDetails);
         System.out.println(token);
         Assert.assertEquals(TOKEN,token);
     }
 
-    @Test
+  //  @Test
     public void testValidateToken() throws ServletException, IOException {
         Assert.assertTrue(classUnderTest.validateToken(TOKEN,userDetails));
     }
 
-    @Test
+  //  @Test
     public void testGetUsernameFromToken(){
         String username = classUnderTest.getUsernameFromToken(TOKEN);
         Assert.assertEquals(USERNAME,username);
     }
 
-    @Test
+  //  @Test
     public void getExpirationDateFromToken(){
        Date date = classUnderTest.getExpirationDateFromToken(TOKEN);
         Date date2 = classUnderTest.generateExpirationDate();
