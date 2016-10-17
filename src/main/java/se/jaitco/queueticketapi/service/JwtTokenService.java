@@ -65,6 +65,14 @@ public class JwtTokenService implements Serializable {
         return claims.getExpiration();
     }
 
+    protected Date generateExpirationDate() {
+        return new Date(System.currentTimeMillis() + expiration * 1000);
+    }
+
+    protected Date getTodaysDate() {
+        return new Date();
+    }
+
     private Claims getClaimsFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
@@ -72,16 +80,10 @@ public class JwtTokenService implements Serializable {
                 .getBody();
     }
 
-    protected Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + expiration * 1000);
-    }
 
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(getTodaysDate());
     }
 
-    protected Date getTodaysDate() {
-        return new Date();
-    }
 }
