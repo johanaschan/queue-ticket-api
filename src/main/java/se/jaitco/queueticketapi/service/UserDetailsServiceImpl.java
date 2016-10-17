@@ -7,8 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import se.jaitco.queueticketapi.model.User;
 import se.jaitco.queueticketapi.model.Roles;
+import se.jaitco.queueticketapi.model.User;
 import se.jaitco.queueticketapi.model.UserDetailsImpl;
 
 import java.util.List;
@@ -21,10 +21,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     UserService userService;
 
+    private static List<GrantedAuthority> mapToGrantedAuthorities(List<Roles> roles) {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.name()))
+                .collect(Collectors.toList());
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userResponse = userService.getUser(username);
-        User user = userResponse.orElseThrow(()-> new UsernameNotFoundException(String.format("user not found '%s'.", username)));
+        User user = userResponse.orElseThrow(() -> new UsernameNotFoundException(String.format("user not found '%s'.", username)));
         return buildUserDetails(user);
     }
 
@@ -32,10 +38,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return UserDetailsImpl.builder().username(user.getUsername()).password(user.getPassword()).authorities(mapToGrantedAuthorities(user.getGrantedRoles())).build();
     }
 
-    private static List<GrantedAuthority> mapToGrantedAuthorities(List<Roles> roles) {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                .collect(Collectors.toList());
-    };
+    ;
 
 }

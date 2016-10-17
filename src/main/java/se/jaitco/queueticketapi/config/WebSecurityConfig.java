@@ -23,15 +23,14 @@ import se.jaitco.queueticketapi.filter.UnauthorizedEntryPoint;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    private UnauthorizedEntryPoint unauthorizedEntryPoint;
+
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
-    UnauthorizedEntryPoint unauthorizedEntryPoint;
-
-    @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder
-                .userDetailsService(this.userDetailsService);
+        authenticationManagerBuilder.userDetailsService(this.userDetailsService);
 //                .passwordEncoder(passwordEncoder());
     }
 
@@ -42,7 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint).and()
-                .authorizeRequests().antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+                .authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 //                .antMatchers(HttpMethod.POST,"/user/login/").permitAll()
                 .anyRequest().permitAll();
 
@@ -56,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
+    public JwtAuthenticationTokenFilter authenticationTokenFilterBean() {
         return new JwtAuthenticationTokenFilter();
     }
 

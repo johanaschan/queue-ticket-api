@@ -11,7 +11,7 @@ import lombok.Value;
 public class LoginRequest {
 
     String name;
-    
+
     String password;
 
     @JsonPOJOBuilder(withPrefix = "")

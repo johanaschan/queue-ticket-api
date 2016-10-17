@@ -36,7 +36,7 @@ public class TicketService {
             tickets.add(ticket);
             registerEvent(Event.UPDATE);
         } finally {
-                            ticketLock.unlock();
+            ticketLock.unlock();
         }
         return ticket;
     }

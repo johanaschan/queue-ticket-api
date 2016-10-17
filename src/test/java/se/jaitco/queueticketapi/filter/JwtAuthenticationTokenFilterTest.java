@@ -2,7 +2,10 @@ package se.jaitco.queueticketapi.filter;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import se.jaitco.queueticketapi.model.UserDetailsImpl;
@@ -16,9 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class JwtAuthenticationTokenFilterTest {
 
@@ -53,10 +54,10 @@ public class JwtAuthenticationTokenFilterTest {
         UserDetails userDetail = UserDetailsImpl.builder().username(username).password(password).build();
         when(request.getHeader(JwtAuthenticationTokenFilter.AUTHORIZATION)).thenReturn(token);
         when(jwtTokenService.getUsernameFromToken(token)).thenReturn(username);
-        when(securityContextHolderService.getAuthentication()).thenReturn(new UsernamePasswordAuthenticationToken(null,null,null));
+        when(securityContextHolderService.getAuthentication()).thenReturn(new UsernamePasswordAuthenticationToken(null, null, null));
         when(userServiceDetail.loadUserByUsername(username)).thenReturn(userDetail);
-        classUnderTest.doFilter(request,response,chain);
-        verify(securityContextHolderService,(times(1))).getAuthentication();
+        classUnderTest.doFilter(request, response, chain);
+        verify(securityContextHolderService, (times(1))).getAuthentication();
 //        verify(securityContextHolderService,(times(1))).setAuthentication(Matchers.any(UsernamePasswordAuthenticationToken.class));
 
     }

@@ -3,7 +3,6 @@ package se.jaitco.queueticketapi.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,29 +19,32 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenService implements Serializable {
 
+    static final String CLAIM_KEY_USERNAME = "username";
     private static final long serialVersionUID = -3301605591108950415L;
 
-    static final String CLAIM_KEY_USERNAME = "username";
-
-//    @Value("${filter.secret}")
+    //    @Value("${filter.secret}")
     private String secret = "Secret";
 
-//    @Value("${filter.expiration}")
+    //    @Value("${filter.expiration}")
     private Long expiration = 100000L;
-
-    public UserDetailsImpl buildJWTUser(User user) {
-        return UserDetailsImpl.builder().username(user.getUsername()).password(user.getPassword()).authorities(mapToGrantedAuthorities(user.getGrantedRoles())).build();
-    }
 
     private static List<GrantedAuthority> mapToGrantedAuthorities(List<Roles> roles) {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
-    };
+    }
+
+    public UserDetailsImpl buildJWTUser(User user) {
+        return UserDetailsImpl.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .authorities(mapToGrantedAuthorities(user.getGrantedRoles()))
+                .build();
+    }
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
-                .claim(CLAIM_KEY_USERNAME,userDetails.getUsername())
+                .claim(CLAIM_KEY_USERNAME, userDetails.getUsername())
                 .setExpiration(generateExpirationDate())
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
@@ -55,7 +57,7 @@ public class JwtTokenService implements Serializable {
 
     public String getUsernameFromToken(String token) {
         final Claims claims = getClaimsFromToken(token);
-        return (String)claims.get(CLAIM_KEY_USERNAME);
+        return (String) claims.get(CLAIM_KEY_USERNAME);
     }
 
     public Date getExpirationDateFromToken(String token) {

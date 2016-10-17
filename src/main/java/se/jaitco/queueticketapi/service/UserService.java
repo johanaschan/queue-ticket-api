@@ -13,15 +13,21 @@ import java.util.Optional;
 public class UserService {
 
     public Optional<User> getUser(String username) {
-        Optional<User> user;
-        if("Aschan".equals(username)){
-            User aschan = User.builder().username("Aschan").password("Fotboll").grantedRoles(Arrays.asList(Roles.CUSTOMER)).build();
+        Optional<User> user = Optional.empty();
+        if ("Aschan".equals(username)) {
+            User aschan = User.builder()
+                    .username("Aschan")
+                    .password("Fotboll")
+                    .grantedRoles(Arrays.asList(Roles.CUSTOMER))
+                    .build();
             user = Optional.of(aschan);
-        }else if("Lmar".equals(username)){
-            User lmar = User.builder().username("Lmar").password("Book").grantedRoles(Arrays.asList(Roles.SELLER)).build();
+        } else if ("Lmar".equals(username)) {
+            User lmar = User.builder()
+                    .username("Lmar")
+                    .password("Book")
+                    .grantedRoles(Arrays.asList(Roles.SELLER))
+                    .build();
             user = Optional.of(lmar);
-        }else{
-            user = Optional.empty();
         }
         return user;
     }
