@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
-@JsonDeserialize(builder = LoginRequest.UserLoginBuilder.class)
+@JsonDeserialize(builder = LoginRequest.LoginRequestBuilder.class)
 public class LoginRequest {
 
     String name;
@@ -15,6 +15,6 @@ public class LoginRequest {
     String password;
 
     @JsonPOJOBuilder(withPrefix = "")
-    public static final class UserLoginBuilder {
+    public static final class LoginRequestBuilder {
     }
 }
