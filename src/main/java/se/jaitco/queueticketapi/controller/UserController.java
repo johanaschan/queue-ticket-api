@@ -17,7 +17,7 @@ public class UserController {
     private AuthenticationService authenticationService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public LoginResponse login(LoginRequest loginRequest) {
+    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
         return authenticationService.login(loginRequest);
     }
 
