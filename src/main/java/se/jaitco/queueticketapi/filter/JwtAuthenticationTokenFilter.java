@@ -1,5 +1,6 @@
 package se.jaitco.queueticketapi.filter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     protected static final String AUTHORIZATION = "Authorization";
@@ -36,7 +38,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                                     FilterChain chain) throws ServletException, IOException {
         String authToken = request.getHeader(AUTHORIZATION);
         authToken = getAuthToken(authToken);
-        String username = jwtTokenService.getUsernameFromToken(authToken);
+        String username = getUsernameFromToken(authToken);
 
         doAuthentication(request, authToken, username);
 
@@ -53,6 +55,16 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 securityContextHolderService.setAuthentication(authentication);
             }
         }
+    }
+
+    private String getUsernameFromToken(String authToken) {
+        String username = null;
+        try {
+            username = jwtTokenService.getUsernameFromToken(authToken);
+        } catch (RuntimeException e) {
+            log.error("getUsernameFromToken error", e);
+        }
+        return username;
     }
 
     private String getAuthToken(String authToken) {
