@@ -25,7 +25,11 @@ public class JwtTokenServiceTest {
 
     //    @Test
     public void testBuildJWTUser() throws ServletException, IOException {
-        User user = User.builder().username(USERNAME).password(PASSWORD).grantedRoles(Arrays.asList(Roles.CUSTOMER)).build();
+        User user = User.builder()
+                .username(USERNAME)
+                .password(PASSWORD)
+                .grantedRoles(Arrays.asList(Roles.CUSTOMER))
+                .build();
         UserDetailsImpl userDetails = classUnderTest.buildJWTUser(user);
         Assert.assertEquals(USERNAME, userDetails.getUsername());
         Assert.assertEquals(PASSWORD, userDetails.getPassword());
