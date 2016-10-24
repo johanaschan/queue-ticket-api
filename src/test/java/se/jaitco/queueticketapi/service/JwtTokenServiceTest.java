@@ -21,7 +21,10 @@ public class JwtTokenServiceTest {
 
     private final JwtTokenService classUnderTest = new JwtTokenServiceTestClass();
 
-    private UserDetailsImpl userDetails = UserDetailsImpl.builder().username(USERNAME).password(PASSWORD).build();
+    private final static UserDetailsImpl userDetails = UserDetailsImpl.builder()
+            .username(USERNAME)
+            .password(PASSWORD)
+            .build();
 
     //    @Test
     public void testBuildJWTUser() throws ServletException, IOException {
