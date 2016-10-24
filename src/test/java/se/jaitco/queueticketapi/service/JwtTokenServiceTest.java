@@ -1,9 +1,6 @@
 package se.jaitco.queueticketapi.service;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import se.jaitco.queueticketapi.model.Roles;
 import se.jaitco.queueticketapi.model.User;
@@ -22,14 +19,9 @@ public class JwtTokenServiceTest {
     private static final String PASSWORD = "PASSWORD";
     private static final String TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6IlVTRVJOQU1FIiwiZXhwIjoyNTMwNTY2MDAwfQ.QZvriUdoD-wNz8bfPgR0nePx2V_H71fSYXfx7GObc0ew71t9ZRiC-PSM9SzixuPn8HG-DrVPg6IxZ5P-nQnLcA";
 
-    @InjectMocks
     private final JwtTokenService classUnderTest = new JwtTokenServiceTestClass();
-    private UserDetailsImpl userDetails = UserDetailsImpl.builder().username(USERNAME).password(PASSWORD).build();
 
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-    }
+    private UserDetailsImpl userDetails = UserDetailsImpl.builder().username(USERNAME).password(PASSWORD).build();
 
     //    @Test
     public void testBuildJWTUser() throws ServletException, IOException {

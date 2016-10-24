@@ -19,25 +19,28 @@ import java.util.stream.Collectors;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    UserService userService;
-
-    private static List<GrantedAuthority> mapToGrantedAuthorities(List<Roles> roles) {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                .collect(Collectors.toList());
-    }
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userResponse = userService.getUser(username);
-        User user = userResponse.orElseThrow(() -> new UsernameNotFoundException(String.format("user not found '%s'.", username)));
+        User user = userResponse.orElseThrow(() ->
+                new UsernameNotFoundException(String.format("user not found '%s'.", username)));
         return buildUserDetails(user);
     }
 
     private UserDetails buildUserDetails(User user) {
-        return UserDetailsImpl.builder().username(user.getUsername()).password(user.getPassword()).authorities(mapToGrantedAuthorities(user.getGrantedRoles())).build();
+        return UserDetailsImpl.builder()
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .authorities(mapToGrantedAuthorities(user.getGrantedRoles()))
+                .build();
     }
 
-    ;
+    private List<GrantedAuthority> mapToGrantedAuthorities(List<Roles> roles) {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.name()))
+                .collect(Collectors.toList());
+    }
 
 }
