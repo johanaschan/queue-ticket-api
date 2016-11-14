@@ -62,7 +62,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         try {
             username = jwtTokenService.getUsernameFromToken(authToken);
         } catch (RuntimeException e) {
-            log.error("getUsernameFromToken error, token was malformed:" + authToken, e);
+            log.error("getUsernameFromToken error, token was malformed: {}", authToken, e);
         }
         return username;
     }
