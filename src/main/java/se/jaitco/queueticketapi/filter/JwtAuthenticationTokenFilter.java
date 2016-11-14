@@ -1,5 +1,9 @@
 package se.jaitco.queueticketapi.filter;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -61,8 +65,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String username = null;
         try {
             username = jwtTokenService.getUsernameFromToken(authToken);
-        } catch (Exception e) {
-            log.error("getUsernameFromToken error, token was malformed:" + authToken);
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
+            log.error("getUsernameFromToken error, token was illegal:" + authToken ". " + e);
         }
         return username;
     }
