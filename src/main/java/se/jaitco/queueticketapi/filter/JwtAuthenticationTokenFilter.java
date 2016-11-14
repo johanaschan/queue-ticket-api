@@ -38,10 +38,10 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                                     FilterChain chain) throws ServletException, IOException {
         String authToken = request.getHeader(AUTHORIZATION);
         authToken = getAuthToken(authToken);
-        String username = getUsernameFromToken(authToken);
-
-        doAuthentication(request, authToken, username);
-
+        if (authToken != null) {
+            String username = getUsernameFromToken(authToken);
+            doAuthentication(request, authToken, username);
+        }
         chain.doFilter(request, response);
     }
 
@@ -61,8 +61,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String username = null;
         try {
             username = jwtTokenService.getUsernameFromToken(authToken);
-        } catch (RuntimeException e) {
-            log.error("getUsernameFromToken error", e);
+        } catch (Exception e) {
+            log.error("getUsernameFromToken error, token was malformed:" + authToken);
         }
         return username;
     }
