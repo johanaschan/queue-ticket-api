@@ -66,7 +66,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         try {
             username = jwtTokenService.getUsernameFromToken(authToken);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
-            log.error("getUsernameFromToken error, token was illegal:" + authToken ". " + e);
+            log.error("getUsernameFromToken error, token was illegal:" + authToken + ". " + e);
         }
         return username;
     }
