@@ -12,6 +12,7 @@ import se.jaitco.queueticketapi.model.User;
 import se.jaitco.queueticketapi.model.UserDetailsImpl;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class JwtTokenService implements Serializable {
 
     static final String CLAIM_KEY_USERNAME = "username";
+    static final String CLAIM_KEY_ROLES = "roles";
     private static final long serialVersionUID = -3301605591108950415L;
 
     //    @Value("${filter.secret}")
@@ -45,9 +47,14 @@ public class JwtTokenService implements Serializable {
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .claim(CLAIM_KEY_USERNAME, userDetails.getUsername())
+                .claim(CLAIM_KEY_ROLES,concatenateToString(userDetails.getAuthorities()))
                 .setExpiration(generateExpirationDate())
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
+    }
+
+    private String concatenateToString(Collection<? extends GrantedAuthority> authorities) {
+        return authorities.stream().map( p -> p.getAuthority()).collect(Collectors.joining(", "));
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
