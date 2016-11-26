@@ -42,8 +42,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint).and()
                 .authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//                .antMatchers(HttpMethod.POST,"/user/login/").permitAll()
-                .anyRequest().permitAll();
+                .antMatchers(HttpMethod.POST,"/user/login/").permitAll()
+                .antMatchers("/tickets-websocket/**").permitAll()
+                .antMatchers("/topic/*").permitAll()
+                .anyRequest().authenticated();
 
         httpSecurity
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);

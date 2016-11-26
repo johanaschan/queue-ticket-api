@@ -18,18 +18,17 @@ public class UserService {
             User aschan = User.builder()
                     .username("Aschan")
                     .password("Fotboll")
-                    .grantedRoles(Arrays.asList(Roles.CUSTOMER))
+                    .grantedRoles(Arrays.asList(Roles.CUSTOMER,Roles.ADMIN))
                     .build();
             user = Optional.of(aschan);
         } else if ("Lmar".equals(username)) {
             User lmar = User.builder()
                     .username("Lmar")
                     .password("Book")
-                    .grantedRoles(Arrays.asList(Roles.SELLER))
+                    .grantedRoles(Arrays.asList(Roles.ADMIN))
                     .build();
             user = Optional.of(lmar);
         }
         return user;
     }
-
 }
