@@ -18,7 +18,7 @@ public class UserService {
             User aschan = User.builder()
                     .username("Aschan")
                     .password("Fotboll")
-                    .grantedRoles(Arrays.asList(Roles.CUSTOMER,Roles.ADMIN))
+                    .grantedRoles(Arrays.asList(Roles.CUSTOMER, Roles.ADMIN))
                     .build();
             user = Optional.of(aschan);
         } else if ("Lmar".equals(username)) {

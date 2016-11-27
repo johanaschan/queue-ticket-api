@@ -47,14 +47,14 @@ public class JwtTokenService implements Serializable {
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .claim(CLAIM_KEY_USERNAME, userDetails.getUsername())
-                .claim(CLAIM_KEY_ROLES,concatenateToString(userDetails.getAuthorities()))
+                .claim(CLAIM_KEY_ROLES, concatenateToString(userDetails.getAuthorities()))
                 .setExpiration(generateExpirationDate())
-                .signWith(SignatureAlgorithm.HS512, secret  )
+                .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
 
     private String concatenateToString(Collection<? extends GrantedAuthority> authorities) {
-        return authorities.stream().map( p -> p.getAuthority()).collect(Collectors.joining(","));
+        return authorities.stream().map(p -> p.getAuthority()).collect(Collectors.joining(","));
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

@@ -1,12 +1,10 @@
 package se.jaitco.queueticketapi.model;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Singular;
 import lombok.Value;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 @Value
