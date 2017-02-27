@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.16.12</version>
+      <version>1.16.14</version>
     </dependency>
     <dependency>
       <groupId>io.springfox</groupId>
@@ -70,12 +70,12 @@
     <dependency>
       <groupId>org.redisson</groupId>
       <artifactId>redisson</artifactId>
-      <version>3.2.3</version>
+      <version>3.3.0</version>
     </dependency>
     <dependency>
       <groupId>com.newrelic.agent.java</groupId>
       <artifactId>newrelic-java</artifactId>
-      <version>3.35.2</version>
+      <version>3.36.0</version>
       <scope>provided</scope>
       <type>zip</type>
     </dependency>
@@ -120,7 +120,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.7.8</version>
+        <version>0.7.9</version>
         <executions>
           <execution>
             <goals>
