@@ -11,24 +11,18 @@ import se.jaitco.queueticketapi.model.Roles;
 import se.jaitco.queueticketapi.model.User;
 import se.jaitco.queueticketapi.model.UserDetailsImpl;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtTokenService implements Serializable {
+public class JwtTokenService {
 
-    static final String CLAIM_KEY_USERNAME = "username";
-    static final String CLAIM_KEY_ROLES = "roles";
-    private static final long serialVersionUID = -3301605591108950415L;
-
-    //    @Value("${filter.secret}")
-    private String secret = "Secret";
-
-    //    @Value("${filter.expiration}")
-    private Long expiration = 100000L;
+    private static final String CLAIM_KEY_USERNAME = "username";
+    private static final String CLAIM_KEY_ROLES = "roles";
+    private static final String secret = "Secret";
+    private static final Long expiration = 100000L;
 
     private static List<GrantedAuthority> mapToGrantedAuthorities(List<Roles> roles) {
         return roles.stream()
@@ -51,10 +45,6 @@ public class JwtTokenService implements Serializable {
                 .setExpiration(generateExpirationDate())
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
-    }
-
-    private String concatenateToString(Collection<? extends GrantedAuthority> authorities) {
-        return authorities.stream().map(p -> p.getAuthority()).collect(Collectors.joining(","));
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
@@ -80,13 +70,16 @@ public class JwtTokenService implements Serializable {
         return new Date();
     }
 
+    private String concatenateToString(Collection<? extends GrantedAuthority> authorities) {
+        return authorities.stream().map(p -> p.getAuthority()).collect(Collectors.joining(","));
+    }
+
     private Claims getClaimsFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
                 .parseClaimsJws(token)
                 .getBody();
     }
-
 
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
