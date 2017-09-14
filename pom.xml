@@ -70,12 +70,12 @@
     <dependency>
       <groupId>org.redisson</groupId>
       <artifactId>redisson</artifactId>
-      <version>3.5.0</version>
+      <version>3.5.1</version>
     </dependency>
     <dependency>
       <groupId>com.newrelic.agent.java</groupId>
       <artifactId>newrelic-java</artifactId>
-      <version>3.41.0</version>
+      <version>3.42.0</version>
       <scope>provided</scope>
       <type>zip</type>
     </dependency>
