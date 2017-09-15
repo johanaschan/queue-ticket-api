@@ -14,18 +14,11 @@ public class RedisConfig {
     @Value("${redis.url}")
     private String redisUrl;
 
-    @Value("${redis.password}")
-    private String redisPassword;
-
     @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
         SingleServerConfig singleServerConfig = config.useSingleServer()
                 .setAddress(redisUrl);
-
-        if (!redisPassword.isEmpty()) {
-            singleServerConfig.setPassword(redisPassword);
-        }
         return Redisson.create(config);
     }
 
