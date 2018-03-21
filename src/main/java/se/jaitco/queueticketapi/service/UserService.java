@@ -17,14 +17,14 @@ public class UserService {
         if ("Aschan".equals(username)) {
             User aschan = User.builder()
                     .username("Aschan")
-                    .password("Fotboll")
+                    .password("{noop}Fotboll")
                     .grantedRoles(Arrays.asList(Roles.CUSTOMER, Roles.ADMIN))
                     .build();
             user = Optional.of(aschan);
         } else if ("Lmar".equals(username)) {
             User lmar = User.builder()
                     .username("Lmar")
-                    .password("Book")
+                    .password("{noop}Book")
                     .grantedRoles(Arrays.asList(Roles.ADMIN))
                     .build();
             user = Optional.of(lmar);
