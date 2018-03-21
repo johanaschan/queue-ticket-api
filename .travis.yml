@@ -1,5 +1,5 @@
 language: java
-jdk: oraclejdk8
+jdk: oraclejdk9
 
 notifications:
   slack:
@@ -12,9 +12,6 @@ env:
   global:
    - secure: "X/s7lv9tiPMqar1ZmvzSFGDNdCnVYdK9K1EAcLlYH8Y0pc4NqohmWK8nk8d0evhoy4oZt+BWDaUcGUJjXVRZ4rnyQs5WJ+VJsQqkEAPZqRs0L1gUvO5u91cjBYo8jG9Lj/DXNlOkHmmScY7q9fLeqU0Tb6bKRMDoDgzVyFacSlHuwOUpCNPFs9xxhMrGJET4nceAddkeIGvNuvANP5n2C0ORZNnndncR6+OGFsuPApcDtp8K6rxizY09u2AInjis7x6PcoxRnzWODUGFv7R5RCbOQivKGGngm4xUlhqKm26nSojPXAVh33InzoYTY60TgUMhNwt/vHr6TaQQubKzQnAspJDJvZP9l8PSj3kHBD2Pb449C8PBbgBeBOnMkja7xnVNLcm3byVXNq3radY9c2J4MZl98KXQAtUP6mrH3K93FBfAm3LbmtkkbgwuGoo4t1tHBwQ0/Fz60BZA1id4ms5V5uq83xRQopA5lA4TO8AB1uFFCHcyh7nNCD9s7qzs9wZiydEkT44AqMjhlzId91gIWrZ3iwxWEu2zzHVgWorobJEHOCIwku8+3Gv/7GKKol3jj2rx2sd+iYVPVMoi36BdJbVie/biVJimnZKyV80KdV8mJayDT2HJtL5QptekW7PZcstjEPhMYhBKjZ0fTE65yeJFfPDBwhKwaFSMiFI="
 
-before_install:
-  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-
 addons:
   coverity_scan:
     project:
@@ -23,4 +20,3 @@ addons:
     notification_email: aschan.johan@gmail.com
     build_command_prepend: "mvn clean"
     build_command:   "mvn -DskipTests=true compile"
-    branch_pattern: coverity_scan
