@@ -71,7 +71,9 @@ public class JwtTokenService {
     }
 
     private String concatenateToString(Collection<? extends GrantedAuthority> authorities) {
-        return authorities.stream().map(p -> p.getAuthority()).collect(Collectors.joining(","));
+        return authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
     }
 
     private Claims getClaimsFromToken(String token) {
