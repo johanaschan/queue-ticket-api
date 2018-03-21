@@ -1,7 +1,5 @@
 [![Build Status](https://travis-ci.org/johanaschan/queue-ticket-api.svg?branch=master)](https://travis-ci.org/johanaschan/queue-ticket-service)
 [![codecov](https://codecov.io/gh/johanaschan/queue-ticket-api/branch/master/graph/badge.svg)](https://codecov.io/gh/johanaschan/queue-ticket-api)
-[![coverity](https://scan.coverity.com/projects/10157/badge.svg)](https://scan.coverity.com/projects/johanaschan-queue-ticket-api)
-[![Dependency Status](https://www.versioneye.com/user/projects/57d7afabbf2b4b0050f30acc/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57d7afabbf2b4b0050f30acc)
 
 # QueueTicketApi
 API for QueueTicket built with Spring Boot using REST and Websocket, Redis as a database and deployed at [Heroku](https://queue-ticket-api.herokuapp.com).
