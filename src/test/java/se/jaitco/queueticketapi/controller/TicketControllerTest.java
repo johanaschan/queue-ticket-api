@@ -64,7 +64,7 @@ public class TicketControllerTest {
 
     @Test
     public void testTicketStatus() {
-        Mockito.when(ticketService.ticketStatus(Matchers.anyLong()))
+        Mockito.when(ticketService.ticketStatus(ArgumentMatchers.anyLong()))
                 .thenReturn(Optional.of(TicketStatus.builder().build()));
 
         final long ticketNumber = 10L;
@@ -75,7 +75,7 @@ public class TicketControllerTest {
 
     @Test
     public void testTicketStatusNotFound() {
-        Mockito.when(ticketService.ticketStatus(Matchers.anyLong())).thenReturn(Optional.empty());
+        Mockito.when(ticketService.ticketStatus(ArgumentMatchers.anyLong())).thenReturn(Optional.empty());
         TicketStatus ticketStatus = classUnderTest.ticketStatus(10L);
         Assert.assertThat(ticketStatus, is(nullValue()));
     }

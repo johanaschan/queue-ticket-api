@@ -10,9 +10,6 @@ import org.springframework.security.core.Authentication;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 
-/**
- * Created by johanaschan on 2016-10-24.
- */
 public class SecurityContextHolderServiceTest {
 
     private final SecurityContextHolderService classUnderTest = new SecurityContextHolderService();

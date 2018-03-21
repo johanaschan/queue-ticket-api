@@ -9,10 +9,10 @@ import org.redisson.api.RDeque;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import se.jaitco.queueticketapi.model.Event;
 import se.jaitco.queueticketapi.model.Ticket;
 import se.jaitco.queueticketapi.model.TicketStatus;
 import se.jaitco.queueticketapi.model.TicketTime;
+import se.jaitco.queueticketapi.model.WebSocketEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -186,7 +186,7 @@ public class TicketServiceTest {
 
     private void verifyWebSocketCall() {
         Mockito.verify(simpMessagingTemplate, Mockito.times(1))
-                .convertAndSend(Matchers.anyString(), Matchers.any(Event.class));
+                .convertAndSend(ArgumentMatchers.anyString(), ArgumentMatchers.any(WebSocketEvent.class));
     }
 
     private List<Ticket> tickets() {

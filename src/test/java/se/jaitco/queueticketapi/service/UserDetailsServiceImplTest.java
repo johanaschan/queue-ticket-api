@@ -13,9 +13,6 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 
-/**
- * Created by johanaschan on 2016-10-24.
- */
 public class UserDetailsServiceImplTest {
 
     @InjectMocks

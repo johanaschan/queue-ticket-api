@@ -56,10 +56,10 @@ public class JwtAuthenticationTokenFilterTest {
         when(jwtTokenService.getUsernameFromToken(token)).thenReturn(username);
         when(securityContextHolderService.getAuthentication()).thenReturn(new UsernamePasswordAuthenticationToken(null, null, null));
         when(userServiceDetail.loadUserByUsername(username)).thenReturn(userDetail);
-        classUnderTest.doFilter(request, response, chain);
-        verify(securityContextHolderService, (times(1))).getAuthentication();
-//        verify(securityContextHolderService,(times(1))).setAuthentication(Matchers.any(UsernamePasswordAuthenticationToken.class));
 
+        classUnderTest.doFilter(request, response, chain);
+
+        verify(securityContextHolderService, (times(1))).getAuthentication();
     }
 
 }
