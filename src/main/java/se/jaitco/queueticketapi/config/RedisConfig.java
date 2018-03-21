@@ -22,6 +22,7 @@ public class RedisConfig {
         Config config = new Config();
         SingleServerConfig singleServerConfig = config.useSingleServer()
                 .setAddress(redisUrl)
+                .setConnectionMinimumIdleSize(10)
                 .setConnectionPoolSize(20);
 
         if (!redisPassword.isEmpty()) {
