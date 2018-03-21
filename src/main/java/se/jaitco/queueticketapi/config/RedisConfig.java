@@ -21,7 +21,8 @@ public class RedisConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
         SingleServerConfig singleServerConfig = config.useSingleServer()
-                .setAddress(redisUrl);
+                .setAddress(redisUrl)
+                .setConnectionPoolSize(20);
 
         if (!redisPassword.isEmpty()) {
             singleServerConfig.setPassword(redisPassword);
