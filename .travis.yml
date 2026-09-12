@@ -15,7 +15,7 @@ env:
 addons:
   coverity_scan:
     project:
-      name: "johanaschan/queue-ticket-api"
+      name: "zingoooo/queue-ticket-api"
       description: "Build submitted via Travis CI"
     notification_email: aschan.johan@gmail.com
     build_command_prepend: "mvn clean"
