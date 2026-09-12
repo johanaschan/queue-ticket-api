@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/zingoooo/queue-ticket-api/branch/master/graph/badge.svg)](https://codecov.io/gh/zingoooo/queue-ticket-api)
+[![codecov](https://codecov.io/github/zingoooo/queue-ticket-api/graph/badge.svg?token=ZRhIwHn3pe)](https://codecov.io/github/zingoooo/queue-ticket-api)
 
 # QueueTicketApi
 API for QueueTicket built with Spring Boot using REST and Websocket, Redis as a database and deployed at [Heroku](https://queue-ticket-api.herokuapp.com).
